@@ -1,5 +1,6 @@
 package ru.mail.kievsan.backend.repository.impl;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
                 return new HashMap<>();
             }
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return objectMapper.readValue(REPO_FILE, new TypeReference<>() {});
+            return objectMapper.readerForMapOf(HashMap.class).readValue(REPO_FILE);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -45,6 +46,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
     }
 
     @Override
+    @JsonAnySetter
     public Optional<T> save(T entity) {
         return Optional.ofNullable(store.put(entity.getId(), entity));
     }
