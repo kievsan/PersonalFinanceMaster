@@ -5,6 +5,7 @@ import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.dto.session.SessionUser;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.service.AuthService;
 import ru.mail.kievsan.backend.service.UserService;
 
 import java.util.Scanner;
@@ -17,6 +18,7 @@ public class SessionLoop {
 
     static final UserFileRepo userRepo = new UserFileRepo();
     static final UserService userService = new UserService(userRepo);
+    static final AuthService authService = new AuthService(userRepo);
 
     static {
         if (userRepo.size() == 0) {
@@ -40,10 +42,10 @@ public class SessionLoop {
                     }
                     switch (startMenu()) {
                         case 1 -> {
-
+                            MainMenu.start(authService.authenticate(user));
                         }
                         case 2 -> {
-                            currentUser = userService.register(user, null);
+                            MainMenu.start(userService.register(user, null));
                         }
                         default -> {
                             if (choiceCloseApp()) break start;
@@ -80,7 +82,7 @@ public class SessionLoop {
             System.out.println("1. Войти");
             System.out.println("2. Зарегистрироваться");
             System.out.println("3. Выйти из приложения");
-            System.out.print("\nВыберите пункт меню: ");
+            System.out.print("\nВыберите пункт меню (1-3): ");
             try {
                 int userChoice = user.getScanner().nextInt();
                 if (user.getScanner().hasNextLine()) user.getScanner().nextLine();
@@ -94,13 +96,14 @@ public class SessionLoop {
         try {
             return user.getScanner().nextLine().charAt(0) == '1';
         } catch (Exception e) {
-            return true;
+            System.out.println("- Нет\n");
+            return false;
         }
     }
 
     public static void close() {
         userRepo.upload();
-        System.out.printf("'%s' закрыл приложение...\n", user.getLogin());
-        //System.out.println(userRepo.getAll());
+        System.out.printf("'%s' закрыл приложение...\n", user.getLogin().isBlank() ? "anonymous" : user.getLogin());
+        System.out.println(userRepo.getAll());
     }
 }

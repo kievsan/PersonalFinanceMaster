@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.Getter;
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.repository.Repo;
@@ -19,7 +20,9 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     final File REPO_FILE = new File(PropertiesLoader.loadDataSourcePath() + "/" + getFilenameOfRepo());
+
     private final Map<K, T> store = load();
+
 
     protected abstract String getFilenameOfRepo();
 
