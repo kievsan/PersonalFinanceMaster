@@ -5,15 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import ru.mail.kievsan.backend.model.Role;
+import ru.mail.kievsan.backend.model.entity.User;
 
 import java.util.Scanner;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class SessionUser {
+public class Session {
     Scanner scanner;
-    String login;
-    String password;
-    Role role;
+    User currentUser;
 }

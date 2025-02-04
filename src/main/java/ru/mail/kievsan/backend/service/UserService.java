@@ -3,7 +3,7 @@ package ru.mail.kievsan.backend.service;
 import lombok.AllArgsConstructor;
 
 import ru.mail.kievsan.backend.model.Role;
-import ru.mail.kievsan.backend.model.dto.session.SessionUser;
+import ru.mail.kievsan.backend.model.dto.session.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.util.Utils;
@@ -16,18 +16,19 @@ public class UserService {
 
     private final UserFileRepo userRepo;
 
-    public User register(SessionUser request, User currentUser) {
+    public Session register(Session request, User owner) {
         Predicate<User> USER_IS_ADMIN = user-> user != null && user.getRole() == Role.ADMIN;
         var newUser = User.builder()
-                .id(request.getLogin())
-                .password(request.getPassword())
-                .role(USER_IS_ADMIN.test(currentUser) ? request.getRole() : Role.USER)
+                .id(request.getCurrentUser().getId())
+                .password(request.getCurrentUser().getPassword())
+                .role(USER_IS_ADMIN.test(owner) ? request.getCurrentUser().getRole() : Role.USER)
                 .build();
         if (userRepo.existsById(newUser.getId())) {
             throw new RuntimeException("The username is already in use, registration is not possible!");
         }
         signup(newUser);
-        return newUser;
+        request.setCurrentUser(newUser);
+        return request;
     }
 
     public void signup(User newUser) {

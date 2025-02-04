@@ -14,13 +14,14 @@ import java.util.Objects;
 @Getter
 public class User extends Identity<String> {
 
-    private final Role role;
     @Setter
     private String password;
 
+    private final Role role;
+
     @Builder
     @JsonCreator()
-    private User(@JsonProperty("id") String id,
+    public User(@JsonProperty("id") String id,
                  @JsonProperty("password") String password,
                  @JsonProperty("role") Role role) {
         super(id);

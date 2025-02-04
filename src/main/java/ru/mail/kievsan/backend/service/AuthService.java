@@ -2,7 +2,7 @@ package ru.mail.kievsan.backend.service;
 
 import lombok.AllArgsConstructor;
 
-import ru.mail.kievsan.backend.model.dto.session.SessionUser;
+import ru.mail.kievsan.backend.model.dto.session.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 
@@ -16,19 +16,21 @@ public class AuthService {
 
     private final UserFileRepo userRepo;
 
-    public User authenticate(SessionUser request) throws RuntimeException {
+    public Session authenticate(Session request) throws RuntimeException {
 
-        String msg = String.format("User '%s'", request.getLogin());
+        String msg = String.format("User '%s'", request.getCurrentUser().getId());
         String errMsg = " was not authenticated: wrong username or password!";
         try {
-            User currentUser = userRepo.getById(request.getLogin()).orElseThrow();
+            User user = userRepo.getById(request.getCurrentUser().getId()).orElseThrow();
 
-            if (!Objects.equals(request.getPassword(), currentUser.getPassword())) {
+            if (!Objects.equals(request.getCurrentUser().getPassword(), user.getPassword())) {
                 throw new NoSuchElementException("wrong password!");
             }
-            msg += String.format(" with ROLE = %s was authenticated!", currentUser.getRole().name());
+            msg += String.format(" with ROLE = %s was authenticated!", user.getRole().name());
             System.out.println("SUCCESS! " + msg);
-            return currentUser;
+
+            request.setCurrentUser(user);
+            return request;
 
         } catch (NoSuchElementException e) {
             throw new RuntimeException(msg + errMsg);
@@ -39,9 +41,11 @@ public class AuthService {
         }
     }
 
-    public String logout(User user) {
-        System.out.printf("User '%s}' (%s) was logged out...\n", user.getId(), user.getRole().name());
-        return String.format("Success logout: %s '%s'", user.getRole().name(), user.getId()) ;
+    public Session logout(Session request) {
+        var id = request.getCurrentUser().getId();
+        var role = request.getCurrentUser().getRole().name();
+        System.out.printf("User '%s}' (%s) was logged out...\n", id, role);
+        System.out.printf("Success logout: %s '%s'", role, id) ;
+        return request;
     }
-
 }

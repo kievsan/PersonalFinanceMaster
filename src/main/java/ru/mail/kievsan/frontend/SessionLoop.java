@@ -2,7 +2,7 @@ package ru.mail.kievsan.frontend;
 
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.model.Role;
-import ru.mail.kievsan.backend.model.dto.session.SessionUser;
+import ru.mail.kievsan.backend.model.dto.session.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.service.AuthService;
@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class SessionLoop {
 
-    static SessionUser user;
+    static Session session;
 
     static final UserFileRepo userRepo = new UserFileRepo();
     static final UserService userService = new UserService(userRepo);
@@ -40,8 +40,8 @@ public class SessionLoop {
                         continue;
                     }
                     switch (startMenu()) {
-                        case 1 -> MainMenu.start(authService.authenticate(user));
-                        case 2 -> MainMenu.start(userService.register(user, null));
+                        case 1 -> MainMenu.start(authService.authenticate(session));
+                        case 2 -> MainMenu.start(userService.register(session, null));
                         default -> {
                             if (choiceCloseApp()) break start;
                             continue;
@@ -65,7 +65,7 @@ public class SessionLoop {
         System.out.printf("Введите пароль (от %d-ти символов): ", minPassword);
         String password = scanner.nextLine();
 
-        user  = new SessionUser(scanner, login, password, Role.USER);
+        session = new Session(scanner, new User(login, password, Role.USER));
 
         return login.isBlank() || login.length() < minLogin ||
                 password.isBlank() || password.length() < minPassword;
@@ -79,8 +79,8 @@ public class SessionLoop {
             System.out.println("3. Выйти из приложения");
             System.out.print("\nВыберите пункт меню (1-3): ");
             try {
-                int userChoice = user.getScanner().nextInt();
-                if (user.getScanner().hasNextLine()) user.getScanner().nextLine();
+                int userChoice = session.getScanner().nextInt();
+                if (session.getScanner().hasNextLine()) session.getScanner().nextLine();
                 return userChoice;
             } catch (Exception ignored) {}
         }
@@ -89,7 +89,7 @@ public class SessionLoop {
     public static boolean choiceCloseApp() {
         System.out.print("\nЗавершить приложение? (1 - Да): ");
         try {
-            return user.getScanner().nextLine().charAt(0) == '1';
+            return session.getScanner().nextLine().charAt(0) == '1';
         } catch (Exception e) {
             System.out.println("- Нет\n");
             return false;
@@ -98,7 +98,8 @@ public class SessionLoop {
 
     public static void close() {
         userRepo.upload();
-        System.out.printf("'%s' закрыл приложение...\n", user.getLogin().isBlank() ? "anonymous" : user.getLogin());
+        System.out.printf("'%s' закрыл приложение...\n",
+                session.getCurrentUser().getId().isBlank() ? "anonymous" : session.getCurrentUser().getId());
         System.out.printf("\n%s\n", userRepo.getAll());
     }
 }
