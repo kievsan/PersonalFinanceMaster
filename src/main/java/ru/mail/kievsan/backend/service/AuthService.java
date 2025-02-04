@@ -18,26 +18,25 @@ public class AuthService {
 
     public User authenticate(SessionUser request) throws RuntimeException {
 
-        var requestUser = User.builder().id(request.getLogin()).password(request.getPassword()).build();
-
         String msg = String.format("User '%s'", request.getLogin());
         String errMsg = " was not authenticated: wrong username or password!";
         try {
-            User currentUser = userRepo.getById(requestUser.getId()).orElseThrow();
+            User currentUser = userRepo.getById(request.getLogin()).orElseThrow();
+
             if (!Objects.equals(request.getPassword(), currentUser.getPassword())) {
                 throw new NoSuchElementException("wrong password!");
             }
             msg += String.format(" with ROLE = %s was authenticated!", currentUser.getRole().name());
             System.out.println("SUCCESS! " + msg);
             return currentUser;
+
         } catch (NoSuchElementException e) {
             throw new RuntimeException(msg + errMsg);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("\t authenticate service - ClassCastException: " +
-                    Arrays.toString(e.getStackTrace()) + "\n\t\t" + e.getMessage()
-            );
-        }
 
+        } catch (RuntimeException e) {
+            throw new RuntimeException("\t authenticate service exception: " +
+                    Arrays.toString(e.getStackTrace()) + "\n\t\t" + e.getMessage());
+        }
     }
 
     public String logout(User user) {

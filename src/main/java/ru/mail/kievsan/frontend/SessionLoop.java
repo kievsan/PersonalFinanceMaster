@@ -14,7 +14,6 @@ import java.util.Scanner;
 public class SessionLoop {
 
     static SessionUser user;
-    static User currentUser;
 
     static final UserFileRepo userRepo = new UserFileRepo();
     static final UserService userService = new UserService(userRepo);
@@ -41,12 +40,8 @@ public class SessionLoop {
                         continue;
                     }
                     switch (startMenu()) {
-                        case 1 -> {
-                            MainMenu.start(authService.authenticate(user));
-                        }
-                        case 2 -> {
-                            MainMenu.start(userService.register(user, null));
-                        }
+                        case 1 -> MainMenu.start(authService.authenticate(user));
+                        case 2 -> MainMenu.start(userService.register(user, null));
                         default -> {
                             if (choiceCloseApp()) break start;
                             continue;
@@ -72,8 +67,8 @@ public class SessionLoop {
 
         user  = new SessionUser(scanner, login, password, Role.USER);
 
-        return login.isBlank() || login.length() < 3 ||
-                password.isBlank() || password.length() < 6;
+        return login.isBlank() || login.length() < minLogin ||
+                password.isBlank() || password.length() < minPassword;
     }
 
     public static int startMenu() {
@@ -104,6 +99,6 @@ public class SessionLoop {
     public static void close() {
         userRepo.upload();
         System.out.printf("'%s' закрыл приложение...\n", user.getLogin().isBlank() ? "anonymous" : user.getLogin());
-        System.out.println(userRepo.getAll());
+        System.out.printf("\n%s\n", userRepo.getAll());
     }
 }

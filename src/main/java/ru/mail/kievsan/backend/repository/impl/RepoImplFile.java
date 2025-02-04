@@ -1,14 +1,13 @@
 package ru.mail.kievsan.backend.repository.impl;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.Getter;
+
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.model.Identity;
+import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.Repo;
 
 import java.io.File;
@@ -23,33 +22,37 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
 
     private final Map<K, T> store = load();
 
+    {
+        System.out.printf("\nзагружаю...\n%s\n", store);
+    }
+
 
     protected abstract String getFilenameOfRepo();
 
-    private Map<K, T> load() {
+    private HashMap<K, T> load() {
         try {
             if (REPO_FILE.createNewFile()) {
                 return new HashMap<>();
             }
+            // для игнорирования неизвестных полей в JSON:
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return objectMapper.readerForMapOf(HashMap.class).readValue(REPO_FILE);
+            return objectMapper.readerForMapOf(User.class).readValue(REPO_FILE);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return new HashMap<>();
         }
     }
 
    public void upload() {
         try {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-            objectMapper.writeValue(REPO_FILE, store);
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // — для форматированного (многострочного) вывода
+            objectMapper.writerFor(HashMap.class).writeValue(REPO_FILE, store);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    @JsonAnySetter
     public Optional<T> save(T entity) {
         return Optional.ofNullable(store.put(entity.getId(), entity));
     }
