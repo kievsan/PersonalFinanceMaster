@@ -3,7 +3,7 @@ package ru.mail.kievsan.backend.service;
 import lombok.AllArgsConstructor;
 
 import ru.mail.kievsan.backend.model.Role;
-import ru.mail.kievsan.backend.model.dto.session.Session;
+import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.util.Utils;

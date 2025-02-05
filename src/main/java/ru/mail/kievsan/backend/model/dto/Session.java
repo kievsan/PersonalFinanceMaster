@@ -1,4 +1,4 @@
-package ru.mail.kievsan.backend.model.dto.session;
+package ru.mail.kievsan.backend.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
