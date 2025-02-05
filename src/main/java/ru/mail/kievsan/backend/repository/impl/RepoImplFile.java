@@ -86,6 +86,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
     public void close() throws IOException {
 
     }
+
     protected String getEntityName() {
         return this.getClass().getSimpleName();
     }
