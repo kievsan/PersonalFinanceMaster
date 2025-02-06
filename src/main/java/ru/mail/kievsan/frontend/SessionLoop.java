@@ -5,6 +5,7 @@ import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.backend.service.AuthService;
 import ru.mail.kievsan.backend.service.UserService;
 
@@ -65,7 +66,7 @@ public class SessionLoop {
         System.out.printf("Введите пароль (от %d-ти символов): ", minPassword);
         String password = scanner.nextLine();
 
-        session = new Session(scanner, new User(login, password, Role.USER));
+        session = new Session(scanner, new User(login, password, Role.USER), new PasswordEncoder());
 
         return login.isBlank() || login.length() < minLogin ||
                 password.isBlank() || password.length() < minPassword;
@@ -97,6 +98,7 @@ public class SessionLoop {
     }
 
     public static void close() {
+        System.out.println("сохраняю данные...");
         userRepo.upload();
         System.out.printf("'%s' закрыл приложение...\n",
                 session.getCurrentUser().getId().isBlank() ? "anonymous" : session.getCurrentUser().getId());

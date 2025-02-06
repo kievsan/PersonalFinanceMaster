@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.security.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -23,7 +24,7 @@ public class AuthService {
         try {
             User user = userRepo.getById(request.getCurrentUser().getId()).orElseThrow();
 
-            if (!Objects.equals(request.getCurrentUser().getPassword(), user.getPassword())) {
+            if (!request.getEncoder().verifyBCrypt(request.getCurrentUser().getPassword(), user.getPassword())) {
                 throw new NoSuchElementException("wrong password!");
             }
             msg += String.format(" with ROLE = %s was authenticated!", user.getRole().name());

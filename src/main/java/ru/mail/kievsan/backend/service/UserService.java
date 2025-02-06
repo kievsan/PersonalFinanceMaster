@@ -6,6 +6,7 @@ import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.util.Utils;
 
 import java.util.function.Predicate;
@@ -20,7 +21,7 @@ public class UserService {
         Predicate<User> USER_IS_ADMIN = user-> user != null && user.getRole() == Role.ADMIN;
         var newUser = User.builder()
                 .id(request.getCurrentUser().getId())
-                .password(request.getCurrentUser().getPassword())
+                .password(request.getEncoder().encodeBCrypt(request.getCurrentUser().getPassword()))
                 .role(USER_IS_ADMIN.test(owner) ? request.getCurrentUser().getRole() : Role.USER)
                 .build();
         if (userRepo.existsById(newUser.getId())) {

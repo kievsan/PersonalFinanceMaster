@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.entity.User;
+import ru.mail.kievsan.backend.security.PasswordEncoder;
 
 import java.util.Scanner;
 
@@ -15,4 +16,5 @@ import java.util.Scanner;
 public class Session {
     Scanner scanner;
     User currentUser;
+    PasswordEncoder encoder;
 }
