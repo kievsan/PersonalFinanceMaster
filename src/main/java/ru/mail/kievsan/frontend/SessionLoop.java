@@ -24,7 +24,7 @@ public class SessionLoop {
         if (userRepo.size() == 0) {
             userService.signup(User.builder()
                     .id(PropertiesLoader.loadAdminLogin())
-                    .password(PropertiesLoader.loadAdminPassword())
+                    .password(PasswordEncoder.encodeBCrypt(PropertiesLoader.loadAdminPassword()))
                     .role(Role.ADMIN)
                     .build());
         }

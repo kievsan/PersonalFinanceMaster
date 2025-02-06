@@ -21,7 +21,7 @@ public class UserService {
         Predicate<User> USER_IS_ADMIN = user-> user != null && user.getRole() == Role.ADMIN;
         var newUser = User.builder()
                 .id(request.getCurrentUser().getId())
-                .password(request.getEncoder().encodeBCrypt(request.getCurrentUser().getPassword()))
+                .password(PasswordEncoder.encodeBCrypt(request.getCurrentUser().getPassword()))
                 .role(USER_IS_ADMIN.test(owner) ? request.getCurrentUser().getRole() : Role.USER)
                 .build();
         if (userRepo.existsById(newUser.getId())) {

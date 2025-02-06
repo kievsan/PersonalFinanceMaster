@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
-import ru.mail.kievsan.backend.security.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 
 @AllArgsConstructor
