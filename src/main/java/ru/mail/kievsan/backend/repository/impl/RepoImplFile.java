@@ -11,7 +11,6 @@ import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.Repo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 

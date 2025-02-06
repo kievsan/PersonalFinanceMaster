@@ -1,4 +1,4 @@
 package ru.mail.kievsan.backend.controller;
 
-public class AuthController {
+public class AdminController {
 }

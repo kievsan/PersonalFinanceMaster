@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 
 
 @AllArgsConstructor
-public class AuthService {
+public class AdminService {
 
     private final UserFileRepo userRepo;
 

@@ -1,15 +1,16 @@
 package ru.mail.kievsan.frontend;
 
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
+import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.model.Role;
+import ru.mail.kievsan.backend.model.Status;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
-import ru.mail.kievsan.backend.service.AuthService;
+import ru.mail.kievsan.backend.service.AdminService;
 import ru.mail.kievsan.backend.service.UserService;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 
@@ -19,7 +20,7 @@ public class SessionLoop {
 
     static final UserFileRepo userRepo = new UserFileRepo();
     static final UserService userService = new UserService(userRepo);
-    static final AuthService authService = new AuthService(userRepo);
+    static final UserController userController = new UserController(userService);
 
     static {
         if (userRepo.size() == 0) {
@@ -38,19 +39,35 @@ public class SessionLoop {
             start: while (true) {
                 try {
                     if (notValidUser(scanner)) {
-                        if (choiceCloseApp()) break;
+                        if (choiceCloseApp("Завершить приложение?")) break;
                         continue;
                     }
                     switch (startMenu()) {
-                        case 1 -> MainMenu.start(authService.authenticate(session));
-                        case 2 -> MainMenu.start(userService.register(session, null));
+                        case 1 -> {
+                            var response = userController.login(session);
+                            if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+                            System.out.println(response.getStatus() + "!");
+                            MainMenu.start(
+                                    response.getBody() == null ? session : response.getBody(),
+                                    userController
+                            );
+                        }
+                        case 2 -> {
+                            var response = userController.register(session);
+                            if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+                            System.out.println(response.getStatus() + "!");
+                            MainMenu.start(
+                                    response.getBody() == null ? session : response.getBody(),
+                                    userController
+                            );
+                        }
                         default -> {
-                            if (choiceCloseApp()) break start;
+                            if (choiceCloseApp("Завершить приложение?")) break start;
                             continue;
                         }
                     }
                 } catch(Exception e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(Status.FAIL + "!\n" + e.getMessage());
                 }
                 System.out.println("\n*****\n");
             }
@@ -88,8 +105,8 @@ public class SessionLoop {
         }
     }
 
-    public static boolean choiceCloseApp() {
-        System.out.print("\nЗавершить приложение? (1 - Да): ");
+    public static boolean choiceCloseApp(String question) {
+        System.out.printf("\n%s (1 - Да): ", question);
         try {
             return session.getScanner().nextLine().charAt(0) == '1';
         } catch (Exception e) {
