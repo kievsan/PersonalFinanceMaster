@@ -9,6 +9,7 @@ import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.backend.service.AuthService;
 import ru.mail.kievsan.backend.service.UserService;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 
@@ -98,10 +99,8 @@ public class SessionLoop {
     }
 
     public static void close() {
-        System.out.println("сохраняю данные...");
-        userRepo.upload();
+        userRepo.close();
         System.out.printf("'%s' закрыл приложение...\n",
                 session.getCurrentUser().getId().isBlank() ? "anonymous" : session.getCurrentUser().getId());
-        System.out.printf("\n%s\n", userRepo.getAll());
     }
 }

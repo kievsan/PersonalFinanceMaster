@@ -10,7 +10,7 @@ public class PasswordEncoder {
     }
     // $2a$12$US00g/uMhoSBm.HiuieBjeMtoN69SN.GE25fCpldebzkryUyopws6
 
-    public boolean verifyBCrypt(String password, String hashCode) {
+    public static boolean verifyBCrypt(String password, String hashCode) {
         return BCrypt.verifyer().verify(password.toCharArray(), hashCode).verified;
     }
 }

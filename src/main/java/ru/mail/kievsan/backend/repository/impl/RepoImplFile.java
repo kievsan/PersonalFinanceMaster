@@ -83,8 +83,10 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
     }
 
     @Override
-    public void close() throws IOException {
-
+    public void close() {
+        System.out.println("сохраняю данные...");
+        this.upload();
+        System.out.printf("\n%s\n\n", this.getAll());
     }
 
     protected String getEntityName() {
