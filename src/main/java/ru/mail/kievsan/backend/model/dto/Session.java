@@ -18,5 +18,4 @@ import java.util.Scanner;
 public class Session {
     Scanner scanner;
     User currentUser;
-    PasswordEncoder encoder;
 }

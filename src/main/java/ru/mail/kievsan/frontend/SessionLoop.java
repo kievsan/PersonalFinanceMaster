@@ -1,14 +1,16 @@
 package ru.mail.kievsan.frontend;
 
+import com.google.gson.Gson;
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.controller.UserController;
+import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
-import ru.mail.kievsan.backend.service.AdminService;
 import ru.mail.kievsan.backend.service.UserService;
 
 import java.util.Scanner;
@@ -16,7 +18,8 @@ import java.util.Scanner;
 
 public class SessionLoop {
 
-    static Session session;
+    static private final Gson gson = new Gson();
+    static Session session = new Session();
 
     static final UserFileRepo userRepo = new UserFileRepo();
     static final UserService userService = new UserService(userRepo);
@@ -36,36 +39,31 @@ public class SessionLoop {
         System.out.println("\n*****\nДобро пожаловать в приложение \"Домашние финансы\"!");
 
         try (Scanner scanner = new Scanner(System.in)) {
+            session.setScanner(scanner);
             start: while (true) {
                 try {
-                    if (notValidUser(scanner)) {
-                        if (choiceCloseApp("Завершить приложение?")) break;
-                        continue;
-                    }
+                    newSession();
                     switch (startMenu()) {
                         case 1 -> {
-                            var response = userController.login(session);
-                            if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
-                            System.out.println(response.getStatus() + "!");
-                            MainMenu.start(
-                                    response.getBody() == null ? session : response.getBody(),
-                                    userController
-                            );
+                            var response = userController.login(session.getCurrentUser());
+                            processResponse(response);
+                            MainMenu.start(session, userController);
                         }
                         case 2 -> {
-                            var response = userController.register(session);
-                            if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
-                            System.out.println(response.getStatus() + "!");
-                            MainMenu.start(
-                                    response.getBody() == null ? session : response.getBody(),
-                                    userController
-                            );
+                            var response = userController.register(session.getCurrentUser());
+                            processResponse(response);
+                            MainMenu.start(session, userController);
                         }
                         default -> {
                             if (choiceCloseApp("Завершить приложение?")) break start;
                             continue;
                         }
                     }
+                } catch(NotValidUserException e) {
+                    System.out.println(Status.FAIL + "!\n" + e.getMessage());
+                    if (choiceCloseApp("Завершить приложение?")) break;
+                    continue;
+
                 } catch(Exception e) {
                     System.out.println(Status.FAIL + "!\n" + e.getMessage());
                 }
@@ -76,18 +74,22 @@ public class SessionLoop {
         System.out.println("\n*****\nСпасибо, что воспользовались приложением \"Домашние финансы\"!");
     }
 
-    public static boolean notValidUser(Scanner scanner) {
-        int minLogin = 3, minPassword = 6;
+    public static void newSession() throws NotValidUserException {
+        session = new Session(session.getScanner(), getValidUser());
+    }
 
-        System.out.printf("Введите логин (от %d-х символов): ", minLogin);
-        String login = scanner.nextLine();
-        System.out.printf("Введите пароль (от %d-ти символов): ", minPassword);
-        String password = scanner.nextLine();
+    public static User getValidUser() throws NotValidUserException {
+        System.out.printf("Введите логин (от %d-х символов): ", User.MIN_LOGIN_LENGTH);
+        String login = session.getScanner().nextLine();
+        System.out.printf("Введите пароль (от %d-ти символов): ", User.MIN_PASSWORD_LENGTH);
+        String password = session.getScanner().nextLine();
+        return new User(login, password, Role.USER);
+    }
 
-        session = new Session(scanner, new User(login, password, Role.USER), new PasswordEncoder());
-
-        return login.isBlank() || login.length() < minLogin ||
-                password.isBlank() || password.length() < minPassword;
+    private static void processResponse(ResponseEntity<User> response) {
+        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+        System.out.println(response.getStatus() + "!");
+        System.out.println(response.getBody() == null ? "" : gson.toJson(response.getBody()));
     }
 
     public static int startMenu() {
@@ -118,6 +120,7 @@ public class SessionLoop {
     public static void close() {
         userRepo.close();
         System.out.printf("'%s' закрыл приложение...\n",
-                session.getCurrentUser().getId().isBlank() ? "anonymous" : session.getCurrentUser().getId());
+                session.getCurrentUser() == null || session.getCurrentUser().getId().isBlank()
+                        ? "anonymous" : session.getCurrentUser().getId());
     }
 }

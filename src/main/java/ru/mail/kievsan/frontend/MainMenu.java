@@ -27,7 +27,7 @@ public class MainMenu {
                     case "5" -> UserMenu.start(session, userController);
                     default -> {
                         if (SessionLoop.choiceCloseApp("Выйти из аккаунта?")) {
-                            var response = userController.logout(session);
+                            var response = userController.logout(session.getCurrentUser());
                             if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
                             System.out.println(response.getStatus() + "!");
                             System.out.println(response.getBody() == null ? "" : response.getBody());

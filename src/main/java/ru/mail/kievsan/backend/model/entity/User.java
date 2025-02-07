@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.Role;
 
@@ -14,9 +14,10 @@ import java.util.Objects;
 @Getter
 public class User extends Identity<String> {
 
-    @Setter
-    private String password;
+    public static final int MIN_LOGIN_LENGTH = 3;
+    public static final int MIN_PASSWORD_LENGTH = 6;
 
+    private String password;
     private final Role role;
 
     @Builder
@@ -25,8 +26,26 @@ public class User extends Identity<String> {
                  @JsonProperty("password") String password,
                  @JsonProperty("role") Role role) {
         super(id);
-        this.password = password;
+        setPassword(password);
         this.role = role;
+    }
+
+    public static boolean isNotValidLogin(String login) {
+        return login.isBlank() || login.length() < MIN_LOGIN_LENGTH;
+    }
+
+    public static boolean isNotValidPassword(String password) {
+        return password.isBlank() || password.length() < MIN_PASSWORD_LENGTH;
+    }
+
+    public void setPassword(String password) throws NotValidUserException {
+        if (isNotValidPassword(password)) throw new NotValidUserException("Not valid user password!");
+        this.password = password;
+    }
+
+    @Override
+    public void validateId() throws NotValidUserException {
+        if (isNotValidLogin(id)) throw new NotValidUserException("Not valid user login!");
     }
 
     @Override

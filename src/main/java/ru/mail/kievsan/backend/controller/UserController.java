@@ -6,6 +6,7 @@ import ru.mail.kievsan.backend.model.Status;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 
+import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.service.UserService;
 
 
@@ -14,16 +15,16 @@ public class UserController {
 
     private final UserService service;
 
-    public ResponseEntity<Session> register(Session request) {
+    public ResponseEntity<User> register(User request) {
         try{
-            var response = service.register(request, null);
+            var response = service.register(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(Status.FAIL, e.getMessage());
         }
     }
 
-    public ResponseEntity<Session> login(Session request) {
+    public ResponseEntity<User> login(User request) {
         try{
             var response = service.authenticate(request);
             return ResponseEntity.ok(response);
@@ -32,9 +33,18 @@ public class UserController {
         }
     }
 
-    public ResponseEntity<String> logout(Session request) {
+    public ResponseEntity<String> logout(User request) {
         try{
             var response = service.logout(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(Status.FAIL, e.getMessage());
+        }
+    }
+
+    public ResponseEntity<User> update(User user) {
+        try{
+            var response = service.updateUser(user);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(Status.FAIL, e.getMessage());

@@ -7,7 +7,13 @@ import java.io.Serializable;
 
 
 @Getter
-@AllArgsConstructor
 public abstract class Identity<K> implements Serializable {
     protected final K id;
+
+    public Identity(K id) {
+        this.id = id;
+        validateId();
+    }
+
+    public abstract void validateId();
 }

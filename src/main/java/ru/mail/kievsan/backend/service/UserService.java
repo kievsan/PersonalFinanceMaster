@@ -2,8 +2,9 @@ package ru.mail.kievsan.backend.service;
 
 import lombok.AllArgsConstructor;
 
+import ru.mail.kievsan.backend.exception.UserNotFoundException;
+import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.Role;
-import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
@@ -11,7 +12,6 @@ import ru.mail.kievsan.util.Utils;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.function.Predicate;
 
 
 @AllArgsConstructor
@@ -19,19 +19,17 @@ public class UserService {
 
     private final UserFileRepo userRepo;
 
-    public Session register(Session request, User owner) throws RuntimeException {
-        Predicate<User> USER_IS_ADMIN = user-> user != null && user.getRole() == Role.ADMIN;
-        var newUser = User.builder()
-                .id(request.getCurrentUser().getId())
-                .password(PasswordEncoder.encodeBCrypt(request.getCurrentUser().getPassword()))
-                .role(USER_IS_ADMIN.test(owner) ? request.getCurrentUser().getRole() : Role.USER)
-                .build();
-        if (userRepo.existsById(newUser.getId())) {
-            throw new RuntimeException("The username is already in use, registration is not possible!");
+    public User register(User user) throws RuntimeException {
+        if (userRepo.existsById(user.getId())) {
+            throw new RuntimeException("The login is already in use, registration is not possible!");
         }
+        var newUser = User.builder()
+                .id(user.getId())
+                .password(PasswordEncoder.encodeBCrypt(user.getPassword()))
+                .role(Role.USER)
+                .build();
         signup(newUser);
-        request.setCurrentUser(newUser);
-        return request;
+        return user;
     }
 
     public void signup(User newUser) throws RuntimeException {
@@ -47,36 +45,47 @@ public class UserService {
         }
     }
 
-    public Session authenticate(Session request) throws RuntimeException {
+    public User authenticate(User user) throws RuntimeException {
 
-        String msg = String.format("User '%s'", request.getCurrentUser().getId());
+        String msg = String.format("User '%s'", user.getId());
         String errMsg = " was not authenticated: wrong username or password!";
         try {
-            User user = userRepo.getById(request.getCurrentUser().getId()).orElseThrow();
+            User targetUser = userRepo.getById(user.getId()).orElseThrow();
 
-            if (!request.getEncoder().verifyBCrypt(request.getCurrentUser().getPassword(), user.getPassword())) {
-                throw new NoSuchElementException("wrong password!");
-            }
-            msg += String.format(" with ROLE = %s was authenticated!", user.getRole().name());
+             Utils.verifyBCrypt(user.getPassword(), targetUser.getPassword());
+
+            msg += String.format(" with ROLE = %s was authenticated!", targetUser.getRole().name());
             System.out.println("SUCCESS! " + msg);
 
-            request.setCurrentUser(user);
-            return request;
+            return user;
 
         } catch (NoSuchElementException e) {
             throw new RuntimeException(msg + errMsg);
 
+        } catch (VerifyUserPasswordException e) {
+            throw new RuntimeException(msg + "\nIt's wrong password!");
+
         } catch (RuntimeException e) {
-            throw new RuntimeException("\t authenticate service exception: " +
+            throw new RuntimeException("\t User authenticate service exception: " +
                     Arrays.toString(e.getStackTrace()) + "\n\t\t" + e.getMessage());
         }
     }
 
-    public String logout(Session request) {
-        var id = request.getCurrentUser().getId();
-        var role = request.getCurrentUser().getRole().name();
+    public String logout(User user) {
+        var id = user.getId();
+        var role = user.getRole().name();
         System.out.printf("(%s) '%s'  was logged out...\n", role, id);
         return String.format("Success logout: %s '%s'", role, id);
+    }
+
+    public User updateUser(User user) throws UserNotFoundException {
+        User newUser = new User(
+                user.getId(),
+                PasswordEncoder.encodeBCrypt(user.getPassword()),
+                user.getRole());
+        User oldUser = userRepo.save(newUser).orElseThrow(() -> new UserNotFoundException(
+                String.format("Обновить данные пользователя не удалось: %s - не найден!", user)));
+        return user;
     }
 
 }
