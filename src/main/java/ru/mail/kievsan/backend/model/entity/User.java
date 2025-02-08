@@ -2,6 +2,7 @@ package ru.mail.kievsan.backend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.Getter;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
@@ -22,6 +23,7 @@ public class User extends Identity<String> {
 
     @Builder
     @JsonCreator()
+    @JsonPropertyOrder({ "id", "password", "role" })
     public User(@JsonProperty("id") String id,
                  @JsonProperty("password") String password,
                  @JsonProperty("role") Role role) {

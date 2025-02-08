@@ -1,6 +1,6 @@
 package ru.mail.kievsan.frontend;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
@@ -12,13 +12,13 @@ import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.backend.service.UserService;
+import ru.mail.kievsan.util.Utils;
 
 import java.util.Scanner;
 
 
 public class SessionLoop {
 
-    static private final Gson gson = new Gson();
     static Session session = new Session();
 
     static final UserFileRepo userRepo = new UserFileRepo();
@@ -86,10 +86,10 @@ public class SessionLoop {
         return new User(login, password, Role.USER);
     }
 
-    private static void processResponse(ResponseEntity<User> response) {
+    private static void processResponse(ResponseEntity<User> response) throws RuntimeException, JsonProcessingException {
         if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
         System.out.println(response.getStatus() + "!");
-        System.out.println(response.getBody() == null ? "" : gson.toJson(response.getBody()));
+        System.out.println(response.getBody() == null ? "" : Utils.toJackson(response.getBody()));
     }
 
     public static int startMenu() {

@@ -1,12 +1,13 @@
 package ru.mail.kievsan.frontend;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.util.Utils;
@@ -15,7 +16,6 @@ import ru.mail.kievsan.util.Utils;
 @AllArgsConstructor
 public class UserMenu {
 
-    static private final Gson gson = new Gson();
     static private Session session;
 
     public static void start(Session currentSession, UserController controller) {
@@ -32,12 +32,7 @@ public class UserMenu {
                 switch (choice) {
                     case "1" -> {
                         var response = controller.update(getValidPasswordRequest());
-
-                        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
-
-                        System.out.println(response.getStatus() + "!");
-                        System.out.println(response.getBody() == null ? "" : gson.toJson(response.getBody()));
-
+                        processResponse(response);
                         session.setCurrentUser(response.getBody());
                     }
                     default -> {
@@ -60,6 +55,12 @@ public class UserMenu {
         String newPassword = session.getScanner().nextLine();
 
         return new User(session.getCurrentUser().getId(), newPassword, session.getCurrentUser().getRole());
+    }
+
+    private static void processResponse(ResponseEntity<?> response) throws RuntimeException, JsonProcessingException {
+        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+        System.out.println(response.getStatus() + "!");
+        System.out.println(response.getBody() == null ? "" : Utils.toJson(response.getBody()));
     }
 
 }

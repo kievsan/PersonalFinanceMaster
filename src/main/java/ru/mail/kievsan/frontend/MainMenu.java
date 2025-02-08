@@ -1,14 +1,18 @@
 package ru.mail.kievsan.frontend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
+import ru.mail.kievsan.util.Utils;
 
 public class MainMenu {
 
     public static void start(Session session, UserController userController) {
         System.out.println("\n*****\nГЛАВНОЕ МЕНЮ приложения \"Домашние финансы\"!");
         start: while (true) {
+            System.out.println("\nMAIN-Меню:");
             System.out.println("1. Управление кошельками");
             System.out.println("2. Управление категориями и бюджетами");
             System.out.println("3. Управление транзакциями");
@@ -28,12 +32,10 @@ public class MainMenu {
                     default -> {
                         if (SessionLoop.choiceCloseApp("Выйти из аккаунта?")) {
                             var response = userController.logout(session.getCurrentUser());
-                            if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
-                            System.out.println(response.getStatus() + "!");
-                            System.out.println(response.getBody() == null ? "" : response.getBody());
+                            processResponse(response);
                             break start;
                         }
-                        continue;
+                        //continue;
                     }
                 }
             } catch (Exception e) {
@@ -42,4 +44,9 @@ public class MainMenu {
         }
     }
 
+    private static void processResponse(ResponseEntity<?> response) throws RuntimeException, JsonProcessingException {
+        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+        System.out.println(response.getStatus() + "!");
+        System.out.println(response.getBody() == null ? "" : Utils.toJackson(response.getBody()));
+    }
 }
