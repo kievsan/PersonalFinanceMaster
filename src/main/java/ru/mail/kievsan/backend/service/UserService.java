@@ -74,7 +74,7 @@ public class UserService {
     public String logout(User user) {
         var id = user.getId();
         var role = user.getRole().name();
-        System.out.printf("(%s) '%s'  was logged out...\n", role, id);
+        //System.out.printf("(%s) '%s'  was logged out...\n", role, id);
         return String.format("Success logout: %s '%s'", role, id);
     }
 
