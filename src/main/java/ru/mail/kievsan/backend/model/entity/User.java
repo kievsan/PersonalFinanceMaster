@@ -16,7 +16,9 @@ import java.util.Objects;
 public class User extends Identity<String> {
 
     public static final int MIN_LOGIN_LENGTH = 3;
+    public static final int MAX_LOGIN_LENGTH = 20;
     public static final int MIN_PASSWORD_LENGTH = 6;
+    public static final int MAX_PASSWORD_LENGTH = 60;
 
     private String password;
     private final Role role;
@@ -33,11 +35,16 @@ public class User extends Identity<String> {
     }
 
     public static boolean isNotValidLogin(String login) {
-        return login.isBlank() || login.length() < MIN_LOGIN_LENGTH;
+        String regex1 = "^(?=.*[a-z])";     // Хотя бы одна маленькая латинская буква
+        String regex11 = "(?=.*\\d)";       // Хотя бы одна цифра
+        String regex2 = "[A-Za-z\\d_@]";    // Только цифры, латинские буквы, подчеркивание или @
+        String regex3 = String.format("{%d,%d}", MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH); // Длина в интервале от MIN до MAX
+        String regex =regex1 + regex2 + regex3 + "$";
+        return !login.matches(regex);
     }
 
     public static boolean isNotValidPassword(String password) {
-        return password.isBlank() || password.length() < MIN_PASSWORD_LENGTH;
+        return password.isBlank() || password.length() < MIN_PASSWORD_LENGTH || password.length() > MAX_PASSWORD_LENGTH;
     }
 
     public void setPassword(String password) throws NotValidUserException {
