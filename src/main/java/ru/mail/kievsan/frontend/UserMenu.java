@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
-import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
@@ -53,14 +53,16 @@ public class UserMenu {
 
         System.out.printf("Введите новый пароль (от %d-ти символов): ", User.MIN_PASSWORD_LENGTH);
         String newPassword = session.getScanner().nextLine();
+        User user = session.getCurrentUser();
 
-        return new User(session.getCurrentUser().getId(), newPassword, session.getCurrentUser().getRole());
+        return new User(user.getId(), newPassword, user.getRole(), user.getReg_date(), user.getStatus(), user.isDel());
     }
 
     private static void processResponse(ResponseEntity<?> response) throws RuntimeException, JsonProcessingException {
-        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+        if (response.getStatus() == ResponseStatus.FAIL) throw new RuntimeException(response.getMessage());
         System.out.println(response.getStatus() + "!");
-        System.out.println(response.getBody() == null ? "" : Utils.toJson(response.getBody()));
+        System.out.println(response.getBody() == null ? "" : Utils.toJackson(response.getBody()));
+        // System.out.println(response.getBody() == null ? "" : Utils.toJson(response.getBody()));
     }
 
 }

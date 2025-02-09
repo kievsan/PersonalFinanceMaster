@@ -82,7 +82,10 @@ public class UserService {
         User newUser = new User(
                 user.getId(),
                 PasswordEncoder.encodeBCrypt(user.getPassword()),
-                user.getRole());
+                user.getRole(),
+                user.getReg_date(),
+                user.getStatus(),
+                user.isDel());
         User oldUser = userRepo.save(newUser).orElseThrow(() -> new UserNotFoundException(
                 String.format("Обновить данные пользователя не удалось: %s - не найден!", user)));
         return user;

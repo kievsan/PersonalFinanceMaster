@@ -2,7 +2,7 @@ package ru.mail.kievsan.frontend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.mail.kievsan.backend.controller.UserController;
-import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.util.Utils;
@@ -45,7 +45,7 @@ public class MainMenu {
     }
 
     private static void processResponse(ResponseEntity<?> response) throws RuntimeException, JsonProcessingException {
-        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+        if (response.getStatus() == ResponseStatus.FAIL) throw new RuntimeException(response.getMessage());
         System.out.println(response.getStatus() + "!");
         System.out.println(response.getBody() == null ? "" : Utils.toJackson(response.getBody()));
     }

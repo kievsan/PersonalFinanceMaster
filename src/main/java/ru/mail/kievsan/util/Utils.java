@@ -1,19 +1,31 @@
 package ru.mail.kievsan.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.regex.PatternSyntaxException;
+
 
 public class Utils {
 
-    static private final Gson gson = new Gson();
+    static private final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            //.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+            .create();
     static private final ObjectMapper mapper = new ObjectMapper();
 
+    static  {
+        mapper  // для игнорирования неизвестных полей в JSON:
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .registerModule(new JavaTimeModule());     // - для типов даты и времени
+    }
 
     public static String toJson(Object obj) {
         return gson.toJson(obj);

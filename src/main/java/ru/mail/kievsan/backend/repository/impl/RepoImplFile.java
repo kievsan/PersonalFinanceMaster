@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.entity.User;
@@ -16,7 +17,11 @@ import java.util.*;
 
 public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K, T> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            // для игнорирования неизвестных полей в JSON:
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .enable(SerializationFeature.INDENT_OUTPUT) // — для форматированного (многострочного) вывода
+            .registerModule(new JavaTimeModule());      // - для типов даты и времени
     final File REPO_FILE = new File(PropertiesLoader.loadDataSourcePath() + "/" + getFilenameOfRepo());
 
     private final Map<K, T> store = load();
@@ -25,7 +30,6 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
         System.out.printf("\nзагружаю...\n%s\n", store);
     }
 
-
     protected abstract String getFilenameOfRepo();
 
     private HashMap<K, T> load() {
@@ -33,10 +37,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
             if (REPO_FILE.createNewFile()) {
                 return new HashMap<>();
             }
-            // для игнорирования неизвестных полей в JSON:
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             return objectMapper.readerForMapOf(User.class).readValue(REPO_FILE);
-
         } catch (Exception e) {
             return new HashMap<>();
         }
@@ -44,7 +45,6 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
 
    public void upload() {
         try {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // — для форматированного (многострочного) вывода
             objectMapper.writerFor(HashMap.class).writeValue(REPO_FILE, store);
         } catch (Exception e) {
             throw new RuntimeException(e);

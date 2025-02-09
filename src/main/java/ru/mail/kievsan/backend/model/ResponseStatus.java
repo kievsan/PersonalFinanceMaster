@@ -6,7 +6,7 @@ import ru.mail.kievsan.util.Utils;
 
 @Getter
 @RequiredArgsConstructor
-public enum Status {
+public enum ResponseStatus {
     OK("OK"),
     FAIL("FAIL");
 

@@ -2,7 +2,7 @@ package ru.mail.kievsan.backend.controller;
 
 import lombok.AllArgsConstructor;
 
-import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 
@@ -20,7 +20,7 @@ public class UserController {
             var response = service.register(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(Status.FAIL, e.getMessage());
+            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
         }
     }
 
@@ -29,7 +29,7 @@ public class UserController {
             var response = service.authenticate(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(Status.FAIL, e.getMessage());
+            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
         }
     }
 
@@ -38,7 +38,7 @@ public class UserController {
             var response = service.logout(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(Status.FAIL, e.getMessage());
+            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class UserController {
             var response = service.updateUser(user);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(Status.FAIL, e.getMessage());
+            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
         }
     }
 

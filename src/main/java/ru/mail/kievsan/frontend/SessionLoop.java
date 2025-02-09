@@ -5,7 +5,7 @@ import ru.mail.kievsan.backend.conf.PropertiesLoader;
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.model.Role;
-import ru.mail.kievsan.backend.model.Status;
+import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
@@ -60,12 +60,12 @@ public class SessionLoop {
                         }
                     }
                 } catch(NotValidUserException e) {
-                    System.out.println(Status.FAIL + "!\n" + e.getMessage());
+                    System.out.println(ResponseStatus.FAIL + "!\n" + e.getMessage());
                     if (choiceCloseApp("Завершить приложение?")) break;
                     continue;
 
                 } catch(Exception e) {
-                    System.out.println(Status.FAIL + "!\n" + e.getMessage());
+                    System.out.println(ResponseStatus.FAIL + "!\n" + e.getMessage());
                 }
                 System.out.println("\n*****\n");
             }
@@ -83,11 +83,11 @@ public class SessionLoop {
         String login = session.getScanner().nextLine();
         System.out.printf("Введите пароль (от %d-ти символов): ", User.MIN_PASSWORD_LENGTH);
         String password = session.getScanner().nextLine();
-        return new User(login, password, Role.USER);
+        return new User(login, password);
     }
 
     private static void processResponse(ResponseEntity<User> response) throws RuntimeException, JsonProcessingException {
-        if (response.getStatus() == Status.FAIL) throw new RuntimeException(response.getMessage());
+        if (response.getStatus() == ResponseStatus.FAIL) throw new RuntimeException(response.getMessage());
         System.out.println(response.getStatus() + "!");
         System.out.println(response.getBody() == null ? "" : Utils.toJackson(response.getBody()));
     }
