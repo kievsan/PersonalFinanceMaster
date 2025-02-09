@@ -32,25 +32,29 @@ public class User extends Identity<String> {
     private boolean del;
 
 
-    public User( String id, String password) {
+    public User(String id, String password) {
         this(id, password, null);
     }
 
-    public User( String id, String password, Role role) {
+    public User(String id, String password, Role role) {
         this(id, password, role, null);
     }
 
-    public User( String id, String password, Role role, LocalDate reg_date) {
+    public User(String id, String password, Role role, LocalDate reg_date) {
         this(id, password, role, reg_date, null);
     }
 
-    public User( String id, String password, Role role, LocalDate reg_date, ActivityStatus status) {
+    public User(String id, String password, Role role, LocalDate reg_date, ActivityStatus status) {
         this(id, password, role, reg_date, status, false);
+    }
+
+    public User(User user, String password) {
+        this(user.getId(), password, user.getRole(), user.getReg_date(), user.getStatus(), user.isDel());
     }
 
     @Builder
     @JsonCreator()
-    @JsonPropertyOrder({ "id", "password", "role", "status" })
+    @JsonPropertyOrder({ "id", "password", "role", "reg_date", "status" })
     public User(@JsonProperty("id") String id,
                 @JsonProperty("password") String password,
                 @JsonProperty("role") Role role,

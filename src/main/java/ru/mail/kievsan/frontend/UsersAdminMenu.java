@@ -2,8 +2,8 @@ package ru.mail.kievsan.frontend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
-
 import ru.mail.kievsan.backend.controller.UserController;
+import ru.mail.kievsan.backend.controller.UsersAdminController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ResponseStatus;
@@ -14,21 +14,21 @@ import ru.mail.kievsan.util.Utils;
 
 
 @AllArgsConstructor
-public class UserMenu {
+public class UsersAdminMenu {
 
     static private Session session;
 
     public static void start(Session currentSession) {
         session = currentSession;
-        var controller = (UserController) session.getMvc().get("userController");
+        var controller = (UsersAdminController) session.getMvc().get("usersAdminController");
+        var userController = (UserController) session.getMvc().get("userController");
 
-        System.out.printf("\n*****\nУправление аккаунтом '%s' приложения \"Домашние финансы\"!\n",
-                session.getCurrentUser().getId());
+        System.out.println("\n*****\nУправление Аккаунтами приложения \"Домашние финансы\"!");
         start: while (true) {
             try {
                 switch (getMenuPoint()) {
                     case "1" -> {
-                        var response = controller.update(getValidPasswordRequest());
+                        var response = userController.update(getValidPasswordRequest());
                         processResponse(response);
                         session.setCurrentUser(response.getBody());
                     }
@@ -43,10 +43,15 @@ public class UserMenu {
     }
 
     private static String getMenuPoint() {
-        System.out.printf("\nUSER-Меню:\t\t\t( %s )\n", session.getCurrentUser());
+        System.out.printf("\nUSER-Меню админа:\t\t\t( %s )\n----------------\n", session.getCurrentUser());
         System.out.println("1. Изменить пароль");
-        System.out.println("2. Вернуться в главное меню");
-        System.out.print("\nВыберите пункт меню (1-2): ");
+        System.out.println("2. Зарегистрировать пользователя");
+        System.out.println("3. Заблокировать пользователя");
+        System.out.println("4. Удалить пользователя");
+        System.out.println("5. Найти пользователя");
+        System.out.println("6. Список пользователей");
+        System.out.println("7. Вернуться в главное меню");
+        System.out.print("\nВыберите пункт меню (1-7): ");
         return session.getScanner().nextLine();
     }
 

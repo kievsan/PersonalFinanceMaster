@@ -1,4 +1,4 @@
-package ru.mail.kievsan.backend.conf;
+package ru.mail.kievsan.backend.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;

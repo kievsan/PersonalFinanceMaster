@@ -1,7 +1,6 @@
 package ru.mail.kievsan.backend.service;
 
 import lombok.AllArgsConstructor;
-
 import ru.mail.kievsan.backend.exception.UserNotFoundException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.Role;
@@ -15,7 +14,7 @@ import java.util.NoSuchElementException;
 
 
 @AllArgsConstructor
-public class UserService implements Service {
+public class UsersAdminService implements Service {
 
     private final UserFileRepo userRepo;
 
@@ -46,18 +45,18 @@ public class UserService implements Service {
     }
 
     public User authenticate(User user) throws RuntimeException {
-        System.out.println(user); ////////////////////////////
+
         String msg = String.format("User '%s'", user.getId());
         String errMsg = " was not authenticated: wrong username or password!";
         try {
             User targetUser = userRepo.getById(user.getId()).orElseThrow();
 
-            Utils.verifyBCrypt(user.getPassword(), targetUser.getPassword());
+             Utils.verifyBCrypt(user.getPassword(), targetUser.getPassword());
 
             msg += String.format(" with ROLE = %s was authenticated!", targetUser.getRole().name());
             System.out.println("SUCCESS! " + msg);
 
-            return new User(targetUser, user.getPassword());
+            return user;
 
         } catch (NoSuchElementException e) {
             throw new RuntimeException(msg + errMsg);

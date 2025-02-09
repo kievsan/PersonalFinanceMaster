@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import ru.mail.kievsan.backend.conf.PropertiesLoader;
+import ru.mail.kievsan.backend.config.PropertiesLoader;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.Repo;

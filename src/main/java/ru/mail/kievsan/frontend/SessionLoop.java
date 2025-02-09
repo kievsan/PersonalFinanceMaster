@@ -1,7 +1,8 @@
 package ru.mail.kievsan.frontend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import ru.mail.kievsan.backend.conf.PropertiesLoader;
+
+import ru.mail.kievsan.backend.config.PropertiesLoader;
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.model.Role;
@@ -20,12 +21,14 @@ import java.util.Scanner;
 public class SessionLoop {
 
     static Session session = new Session();
-
-    static final UserFileRepo userRepo = new UserFileRepo();
-    static final UserService userService = new UserService(userRepo);
-    static final UserController userController = new UserController(userService);
+    static UserController userController;
+    static UserFileRepo userRepo;
 
     static {
+        userController = (UserController) session.getMvc().get("userController");
+        userRepo = (UserFileRepo) session.getMvc().get("userRepo");
+        final var userService = (UserService) session.getMvc().get("userService");
+
         if (userRepo.size() == 0) {
             userService.signup(User.builder()
                     .id(PropertiesLoader.loadAdminLogin())
@@ -47,12 +50,12 @@ public class SessionLoop {
                         case 1 -> {
                             var response = userController.login(session.getCurrentUser());
                             processResponse(response);
-                            MainMenu.start(session, userController);
+                            MainMenu.start(session);
                         }
                         case 2 -> {
                             var response = userController.register(session.getCurrentUser());
                             processResponse(response);
-                            MainMenu.start(session, userController);
+                            MainMenu.start(session);
                         }
                         default -> {
                             if (choiceCloseApp("Завершить приложение?")) break start;
@@ -75,7 +78,7 @@ public class SessionLoop {
     }
 
     public static void newSession() throws NotValidUserException {
-        session = new Session(session.getScanner(), getValidUser());
+        session = new Session(getValidUser(), session.getScanner(), session.getMvc());
     }
 
     public static User getValidUser() throws NotValidUserException {
@@ -88,8 +91,10 @@ public class SessionLoop {
 
     private static void processResponse(ResponseEntity<User> response) throws RuntimeException, JsonProcessingException {
         if (response.getStatus() == ResponseStatus.FAIL) throw new RuntimeException(response.getMessage());
+        User user = response.getBody();
+        session.setCurrentUser(user);
         System.out.println(response.getStatus() + "!");
-        System.out.println(response.getBody() == null ? "" : Utils.toJackson(response.getBody()));
+        System.out.printf("%s\t%s\n", user, Utils.toJackson(user));
     }
 
     public static int startMenu() {
@@ -119,8 +124,6 @@ public class SessionLoop {
 
     public static void close() {
         userRepo.close();
-        System.out.printf("'%s' закрыл приложение...\n",
-                session.getCurrentUser() == null || session.getCurrentUser().getId().isBlank()
-                        ? "anonymous" : session.getCurrentUser().getId());
+        System.out.println("SUCCESS!");
     }
 }
