@@ -14,33 +14,6 @@ public class UsersAdminController implements Controller {
 
     private final UsersAdminService service;
 
-    public ResponseEntity<User> register(User request) {
-        try{
-            var response = service.register(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
-        }
-    }
-
-    public ResponseEntity<User> login(User request) {
-        try{
-            var response = service.authenticate(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
-        }
-    }
-
-    public ResponseEntity<String> logout(User request) {
-        try{
-            var response = service.logout(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
-        }
-    }
-
     public ResponseEntity<User> update(User user) {
         try{
             var response = service.updateUser(user);
@@ -49,7 +22,5 @@ public class UsersAdminController implements Controller {
             return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
         }
     }
-
-    public static void start(Session session) {}
 
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 
 import ru.mail.kievsan.backend.exception.UserNotFoundException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
-import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
@@ -23,12 +22,7 @@ public class UserService implements Service {
         if (userRepo.existsById(user.getId())) {
             throw new RuntimeException("The login is already in use, registration is not possible!");
         }
-        var newUser = User.builder()
-                .id(user.getId())
-                .password(PasswordEncoder.encodeBCrypt(user.getPassword()))
-                .role(Role.USER)
-                .build();
-        signup(newUser);
+        signup(new User(user, PasswordEncoder.encodeBCrypt(user.getPassword())));
         return user;
     }
 
@@ -46,8 +40,7 @@ public class UserService implements Service {
     }
 
     public User authenticate(User user) throws RuntimeException {
-        System.out.println(user); ////////////////////////////
-        String msg = String.format("User '%s'", user.getId());
+        String msg = String.format("\n'%s'", user.getId());
         String errMsg = " was not authenticated: wrong username or password!";
         try {
             User targetUser = userRepo.getById(user.getId()).orElseThrow();
@@ -68,7 +61,6 @@ public class UserService implements Service {
         } catch (RuntimeException e) {
             throw new RuntimeException("\t User authenticate service exception: " +
                     Arrays.toString(e.getStackTrace()) + "\n\t\t" + e.getMessage());
-
         }
     }
 
@@ -80,17 +72,10 @@ public class UserService implements Service {
     }
 
     public User updateUser(User user) throws UserNotFoundException {
-        User newUser = new User(
-                user.getId(),
-                PasswordEncoder.encodeBCrypt(user.getPassword()),
-                user.getRole(),
-                user.getReg_date(),
-                user.getStatus(),
-                user.isDel());
+        User newUser = new User(user, PasswordEncoder.encodeBCrypt(user.getPassword()));
         User oldUser = userRepo.save(newUser).orElseThrow(() -> new UserNotFoundException(
                 String.format("Обновить данные пользователя не удалось: %s - не найден!", user)));
         return user;
     }
-
 
 }

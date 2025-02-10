@@ -12,6 +12,8 @@ import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.Role;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -25,11 +27,10 @@ public class User extends Identity<String> {
 
     private String password;
     private final Role role;
-    private final LocalDate reg_date;
+    private final LocalDateTime reg_date;
     @Setter
     private ActivityStatus status;
-    @Getter
-    private boolean del;
+    private LocalDateTime status_date;
 
 
     public User(String id, String password) {
@@ -40,16 +41,16 @@ public class User extends Identity<String> {
         this(id, password, role, null);
     }
 
-    public User(String id, String password, Role role, LocalDate reg_date) {
+    public User(String id, String password, Role role, LocalDateTime reg_date) {
         this(id, password, role, reg_date, null);
     }
 
-    public User(String id, String password, Role role, LocalDate reg_date, ActivityStatus status) {
-        this(id, password, role, reg_date, status, false);
+    public User(String id, String password, Role role, LocalDateTime reg_date, ActivityStatus status) {
+        this(id, password, role, reg_date, status, null);
     }
 
     public User(User user, String password) {
-        this(user.getId(), password, user.getRole(), user.getReg_date(), user.getStatus(), user.isDel());
+        this(user.getId(), password, user.getRole(), user.getReg_date(), user.getStatus(), user.getStatus_date());
     }
 
     @Builder
@@ -58,15 +59,15 @@ public class User extends Identity<String> {
     public User(@JsonProperty("id") String id,
                 @JsonProperty("password") String password,
                 @JsonProperty("role") Role role,
-                @JsonProperty("reg_date") LocalDate reg_date,
+                @JsonProperty("reg_date") LocalDateTime reg_date,
                 @JsonProperty("status") ActivityStatus status,
-                @JsonProperty("is_del") boolean isDeleted) {
+                @JsonProperty("status_date") LocalDateTime statusDate) {
         super(id);
         setPassword(password);
-        this.role = role == null ? Role.USER : role;                  // (nullable = false)
-        this.reg_date = reg_date == null ? LocalDate.now() : reg_date;  // (nullable = false)
-        this.status = status == null ? ActivityStatus.ACTIVE : status;  // (nullable = false)
-        this.del = isDeleted;
+        this.role = role == null ? Role.USER : role;                                // (nullable = false)
+        this.reg_date = reg_date == null ? LocalDateTime.now() : reg_date;          // (nullable = false)
+        this.status = status == null ? ActivityStatus.ACTIVE : status;              // (nullable = false)
+        this.status_date = statusDate == null ? LocalDateTime.now() : statusDate;   // (nullable = false)
     }
 
     public static boolean isNotValidLogin(String login) {
@@ -92,9 +93,8 @@ public class User extends Identity<String> {
         if (isNotValidLogin(id)) throw new NotValidUserException("Not valid user login!");
     }
 
-    public void setDel(boolean del) {
-        this.del = del;
-        if (del) setStatus(ActivityStatus.BLOCKED);
+    public void setStatus_date(boolean status_date) {
+        this.status_date = LocalDateTime.now();
     }
 
     @Override

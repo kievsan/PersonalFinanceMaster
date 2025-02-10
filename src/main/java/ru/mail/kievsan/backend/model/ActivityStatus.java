@@ -8,7 +8,8 @@ import ru.mail.kievsan.util.Utils;
 @RequiredArgsConstructor
 public enum ActivityStatus {
     ACTIVE("ACTIVE"),
-    BLOCKED("BLOCKED");
+    LOCKED("LOCKED"),
+    DELETED("DELETED");
 
     private final String name;
 

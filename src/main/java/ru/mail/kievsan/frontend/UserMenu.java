@@ -65,9 +65,8 @@ public class UserMenu {
 
         System.out.printf("Введите новый пароль (от %d-ти символов): ", User.MIN_PASSWORD_LENGTH);
         String newPassword = session.getScanner().nextLine();
-        User user = session.getCurrentUser();
 
-        return new User(user.getId(), newPassword, user.getRole(), user.getReg_date(), user.getStatus(), user.isDel());
+        return new User(session.getCurrentUser(), newPassword);
     }
 
 }

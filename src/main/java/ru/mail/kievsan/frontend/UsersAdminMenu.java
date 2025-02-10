@@ -2,15 +2,19 @@ package ru.mail.kievsan.frontend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
+
 import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.controller.UsersAdminController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ResponseStatus;
+import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.util.Utils;
+
+import java.util.Objects;
 
 
 @AllArgsConstructor
@@ -31,6 +35,10 @@ public class UsersAdminMenu {
                         var response = userController.update(getValidPasswordRequest());
                         processResponse(response);
                         session.setCurrentUser(response.getBody());
+                    }
+                    case "2" -> {
+                        var response = userController.register(getValidUser());
+                        processResponse(response);
                     }
                     default -> {
                         if (SessionLoop.choiceCloseApp("Вернуться в главное меню?")) break start;
@@ -70,9 +78,18 @@ public class UsersAdminMenu {
 
         System.out.printf("Введите новый пароль (от %d-ти символов): ", User.MIN_PASSWORD_LENGTH);
         String newPassword = session.getScanner().nextLine();
-        User user = session.getCurrentUser();
 
-        return new User(user.getId(), newPassword, user.getRole(), user.getReg_date(), user.getStatus(), user.isDel());
+        return new User(session.getCurrentUser(), newPassword);
+    }
+
+    public static User getValidUser() throws NotValidUserException {
+        System.out.printf("Введите логин (от %d-х символов): ", User.MIN_LOGIN_LENGTH);
+        String login = session.getScanner().nextLine();
+        System.out.printf("Введите пароль (от %d-ти символов): ", User.MIN_PASSWORD_LENGTH);
+        String password = session.getScanner().nextLine();
+        System.out.print("Выберите роль (1-ADMIN, 2-USER): ");
+        Role role = Objects.equals(session.getScanner().nextLine().trim(), "1") ? Role.ADMIN : Role.USER;
+        return new User(login, password, role);
     }
 
 }
