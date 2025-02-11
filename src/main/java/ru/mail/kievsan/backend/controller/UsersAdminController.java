@@ -29,7 +29,6 @@ public class UsersAdminController implements Controller {
     }
 
     public ResponseEntity<User> updateUserStatus(updateUserStatusRequest request, User currentUser) {
-        System.out.println(request); ////////////////////////////
         try{
             checkAccess(request.getId(), currentUser);
             var response = service.updateUserStatus(request.getId(), request.getStatus());

@@ -47,9 +47,9 @@ public class UsersAdminMenu {
                         processResponse(response);
                     }
                     case "3" -> {
-                        var response = controller.updateUserStatus(
-                                new updateUserStatusRequest(getValidLogin(), getValidUserStatus()),
-                                session.getCurrentUser());
+                        var request = new updateUserStatusRequest(getValidLogin(), getValidUserStatus());
+                        System.out.println(request); ////////////////////////////
+                        var response = controller.updateUserStatus(request, session.getCurrentUser());
                         processResponse(response);
                     }
                     case "4" -> {
