@@ -1,15 +1,13 @@
 package ru.mail.kievsan.backend.repository.impl;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.mail.kievsan.backend.config.PropertiesLoader;
+import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.Repo;
+import ru.mail.kievsan.util.Utils;
 
 import java.io.File;
 import java.util.*;
@@ -17,11 +15,7 @@ import java.util.*;
 
 public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K, T> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            // для игнорирования неизвестных полей в JSON:
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .enable(SerializationFeature.INDENT_OUTPUT) // — для форматированного (многострочного) вывода
-            .registerModule(new JavaTimeModule());      // - для типов даты и времени
+    private final ObjectMapper jacksonMapper = Utils.prettyJackson;
     final File REPO_FILE = new File(PropertiesLoader.loadDataSourcePath() + "/" + getFilenameOfRepo());
 
     private final Map<K, T> store = load();
@@ -37,7 +31,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
             if (REPO_FILE.createNewFile()) {
                 return new HashMap<>();
             }
-            return objectMapper.readerForMapOf(User.class).readValue(REPO_FILE);
+            return jacksonMapper.readerForMapOf(User.class).readValue(REPO_FILE);
         } catch (Exception e) {
             return new HashMap<>();
         }
@@ -45,7 +39,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
 
    public void upload() {
         try {
-            objectMapper.writerFor(HashMap.class).writeValue(REPO_FILE, store);
+            jacksonMapper.writerFor(HashMap.class).writeValue(REPO_FILE, store);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

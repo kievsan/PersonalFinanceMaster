@@ -53,6 +53,10 @@ public class User extends Identity<String> {
         this(user.getId(), password, user.getRole(), user.getReg_date(), user.getStatus(), user.getStatus_date());
     }
 
+    public User(User user, ActivityStatus status) {
+        this(user.getId(), user.getPassword(), user.getRole(), user.getReg_date(), status, user.getStatus_date());
+    }
+
     @Builder
     @JsonCreator()
     @JsonPropertyOrder({ "id", "password", "role", "reg_date", "status" })
@@ -68,6 +72,10 @@ public class User extends Identity<String> {
         this.reg_date = reg_date == null ? LocalDateTime.now() : reg_date;          // (nullable = false)
         this.status = status == null ? ActivityStatus.ACTIVE : status;              // (nullable = false)
         this.status_date = statusDate == null ? LocalDateTime.now() : statusDate;   // (nullable = false)
+    }
+
+    public User copy() {
+        return new User(getId(), getPassword(), getRole(), getReg_date(), getStatus(), getStatus_date());
     }
 
     public static boolean isNotValidLogin(String login) {

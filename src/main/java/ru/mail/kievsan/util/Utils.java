@@ -3,12 +3,12 @@ package ru.mail.kievsan.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
 
-import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -19,6 +19,11 @@ public class Utils {
             .setPrettyPrinting()
             //.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
             .create();
+    static public final ObjectMapper prettyJackson = new ObjectMapper()
+                // для игнорирования неизвестных полей в JSON:
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enable(SerializationFeature.INDENT_OUTPUT) // — для форматированного (многострочного) вывода
+                .registerModule(new JavaTimeModule());      // - для типов даты и времени
     static private final ObjectMapper mapper = new ObjectMapper();
 
     static  {
