@@ -5,12 +5,7 @@ import lombok.Getter;
 import ru.mail.kievsan.backend.model.ActivityStatus;
 
 
-@Getter
-@AllArgsConstructor
-public class updateUserStatusRequest {
-    final String id;
-    final ActivityStatus status;
-
+public record updateUserStatusRequest(String id, ActivityStatus status) {
     @Override
     public String toString() {
         return "Request status for user '" + this.id + "': " + this.status;

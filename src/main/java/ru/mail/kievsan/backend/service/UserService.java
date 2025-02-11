@@ -2,13 +2,16 @@ package ru.mail.kievsan.backend.service;
 
 import lombok.AllArgsConstructor;
 
+import ru.mail.kievsan.backend.exception.UserLockedException;
 import ru.mail.kievsan.backend.exception.UserNotFoundException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
+import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.util.Utils;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -45,6 +48,11 @@ public class UserService implements Service {
         try {
             User targetUser = userRepo.getById(user.getId()).orElseThrow();
 
+            if (targetUser.getStatus() == ActivityStatus.DELETED) throw new UserNotFoundException("user was deleted!");
+            if (targetUser.getStatus() == ActivityStatus.LOCKED) throw new UserLockedException(String.format(
+                    "%s was LOCKED! %s ", targetUser,
+                    targetUser.getStatus_date().format(DateTimeFormatter.ofPattern("(yyyy-MM-dd HH:mm:ss) "))));
+
             Utils.verifyBCrypt(user.getPassword(), targetUser.getPassword());
 
             msg += String.format(" with ROLE = %s was authenticated!", targetUser.getRole().name());
@@ -52,11 +60,11 @@ public class UserService implements Service {
 
             return new User(targetUser, user.getPassword());
 
-        } catch (NoSuchElementException e) {
-            throw new RuntimeException(msg + errMsg);
+        } catch (NoSuchElementException | UserNotFoundException | VerifyUserPasswordException e) {
+            throw new UserNotFoundException(msg + errMsg);
 
-        } catch (VerifyUserPasswordException e) {
-            throw new RuntimeException(msg + "\nIt's wrong password!");
+        } catch (UserLockedException e) {
+            throw e;
 
         } catch (RuntimeException e) {
             throw new RuntimeException("\t User authenticate service exception: " +

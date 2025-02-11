@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import ru.mail.kievsan.backend.exception.UserNotFoundException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ActivityStatus;
+import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.util.Utils;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,6 +32,7 @@ public class UsersAdminService implements Service {
     public User updateUserStatus(String id, ActivityStatus status) {
         User user = getUserById(id);
         user.setStatus(status);
+        user.setStatus_date();
         return user.copy();
     }
 
@@ -37,7 +40,7 @@ public class UsersAdminService implements Service {
         return getUserById(id).copy();
     }
 
-    private User getUserById(String id) {
+    private User getUserById(String id) throws UserNotFoundException {
         return userRepo.getById(id).orElseThrow(() -> new UserNotFoundException("user '" + id + "' not found!"));
     }
 
@@ -81,6 +84,22 @@ public class UsersAdminService implements Service {
 
     public Integer getUsersNumber(String filter) {
         return getUserList(filter).size();
+    }
+
+    public boolean isAdminById(String id) {
+        try {
+            return getUserById(id).getRole() == Role.ADMIN;
+        } catch (UserNotFoundException ignored) {
+            return false;
+        }
+    }
+
+    public boolean isSystemById(String id) {
+        try {
+            return getUserById(id).isSystem();
+        } catch (UserNotFoundException ignored) {
+            return false;
+        }
     }
 
 }

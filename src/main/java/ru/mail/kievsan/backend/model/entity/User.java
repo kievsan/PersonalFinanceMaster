@@ -11,9 +11,7 @@ import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.Role;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
 
@@ -27,6 +25,7 @@ public class User extends Identity<String> {
 
     private String password;
     private final Role role;
+    private final boolean system;
     private final LocalDateTime reg_date;
     @Setter
     private ActivityStatus status;
@@ -38,23 +37,29 @@ public class User extends Identity<String> {
     }
 
     public User(String id, String password, Role role) {
-        this(id, password, role, null);
+        this(id, password, role, false);
     }
 
-    public User(String id, String password, Role role, LocalDateTime reg_date) {
-        this(id, password, role, reg_date, null);
+    public User(String id, String password, Role role, boolean system) {
+        this(id, password, role, system, null);
     }
 
-    public User(String id, String password, Role role, LocalDateTime reg_date, ActivityStatus status) {
-        this(id, password, role, reg_date, status, null);
+    public User(String id, String password, Role role, boolean system, LocalDateTime reg_date) {
+        this(id, password, role, system, reg_date, null);
+    }
+
+    public User(String id, String password, Role role, boolean system, LocalDateTime reg_date, ActivityStatus status) {
+        this(id, password, role, system, reg_date, status, null);
     }
 
     public User(User user, String password) {
-        this(user.getId(), password, user.getRole(), user.getReg_date(), user.getStatus(), user.getStatus_date());
+        this(user.getId(), password, user.getRole(), user.isSystem(), user.getReg_date(),
+                user.getStatus(), user.getStatus_date());
     }
 
     public User(User user, ActivityStatus status) {
-        this(user.getId(), user.getPassword(), user.getRole(), user.getReg_date(), status, user.getStatus_date());
+        this(user.getId(), user.getPassword(), user.getRole(), user.isSystem(), user.getReg_date(),
+                status, user.getStatus_date());
     }
 
     @Builder
@@ -63,19 +68,21 @@ public class User extends Identity<String> {
     public User(@JsonProperty("id") String id,
                 @JsonProperty("password") String password,
                 @JsonProperty("role") Role role,
+                @JsonProperty("system") boolean system,
                 @JsonProperty("reg_date") LocalDateTime reg_date,
                 @JsonProperty("status") ActivityStatus status,
                 @JsonProperty("status_date") LocalDateTime statusDate) {
         super(id);
         setPassword(password);
         this.role = role == null ? Role.USER : role;                                // (nullable = false)
+        this.system = this.role != Role.USER && system;
         this.reg_date = reg_date == null ? LocalDateTime.now() : reg_date;          // (nullable = false)
         this.status = status == null ? ActivityStatus.ACTIVE : status;              // (nullable = false)
         this.status_date = statusDate == null ? LocalDateTime.now() : statusDate;   // (nullable = false)
     }
 
     public User copy() {
-        return new User(getId(), getPassword(), getRole(), getReg_date(), getStatus(), getStatus_date());
+        return new User(getId(), getPassword(), getRole(), isSystem(), getReg_date(), getStatus(), getStatus_date());
     }
 
     public static boolean isNotValidLogin(String login) {
@@ -96,13 +103,13 @@ public class User extends Identity<String> {
         this.password = password;
     }
 
+    public void setStatus_date() {
+        this.status_date = LocalDateTime.now();
+    }
+
     @Override
     public void validateId() throws NotValidUserException {
         if (isNotValidLogin(id)) throw new NotValidUserException("Not valid user login!");
-    }
-
-    public void setStatus_date(boolean status_date) {
-        this.status_date = LocalDateTime.now();
     }
 
     @Override

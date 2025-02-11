@@ -27,8 +27,8 @@ public class UsersAdminController implements Controller {
 
     public ResponseEntity<User> updateUserStatus(updateUserStatusRequest request, User currentUser) {
         try{
-            checkAccess(request.getId(), currentUser);
-            var response = service.updateUserStatus(request.getId(), request.getStatus());
+            checkRightsForUpdate(request.id(), currentUser);
+            var response = service.updateUserStatus(request.id(), request.status());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
@@ -62,8 +62,10 @@ public class UsersAdminController implements Controller {
         }
     }
 
-    public void checkAccess(String requestId, User currentUser) {
+    public void checkRightsForUpdate(String requestId, User currentUser) {
         if (Objects.equals(requestId, currentUser.getId())) throw new RuntimeException("Has no access!");
+        if (service.isSystemById(requestId) || (!currentUser.isSystem() && service.isAdminById(requestId))
+        ) throw new RuntimeException("Has no rights!");
     }
 
 }

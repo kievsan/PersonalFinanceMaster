@@ -34,6 +34,7 @@ public class SessionLoop {
                     .id(PropertiesLoader.loadAdminLogin())
                     .password(PasswordEncoder.encodeBCrypt(PropertiesLoader.loadAdminPassword()))
                     .role(Role.ADMIN)
+                    .system(true)
                     .build());
         }
     }
