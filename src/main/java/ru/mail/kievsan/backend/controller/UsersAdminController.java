@@ -1,13 +1,10 @@
 package ru.mail.kievsan.backend.controller;
 
 import lombok.AllArgsConstructor;
-import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
-import ru.mail.kievsan.backend.model.dto.Session;
-import ru.mail.kievsan.backend.model.dto.updateUserStatusRequest;
+import ru.mail.kievsan.backend.model.dto.admin.updateUserStatusRequest;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.service.UserService;
 import ru.mail.kievsan.backend.service.UsersAdminService;
 
 import java.util.List;

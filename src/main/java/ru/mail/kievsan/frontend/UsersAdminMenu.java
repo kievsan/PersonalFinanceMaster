@@ -13,7 +13,7 @@ import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
-import ru.mail.kievsan.backend.model.dto.updateUserStatusRequest;
+import ru.mail.kievsan.backend.model.dto.admin.updateUserStatusRequest;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.util.Utils;
 

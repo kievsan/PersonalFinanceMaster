@@ -42,9 +42,9 @@ public class UserController implements Controller {
         }
     }
 
-    public ResponseEntity<User> update(User user) {
+    public ResponseEntity<User> update(User request) {
         try{
-            var response = service.updateUser(user);
+            var response = service.updateUser(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
