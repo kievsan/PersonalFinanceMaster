@@ -2,7 +2,7 @@ package ru.mail.kievsan.frontend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import ru.mail.kievsan.backend.controller.UserController;
+import ru.mail.kievsan.backend.controller.impl.UserController;
 import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;

@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import ru.mail.kievsan.backend.config.MVC;
-import ru.mail.kievsan.backend.controller.UserController;
-import ru.mail.kievsan.backend.controller.UsersAdminController;
+import ru.mail.kievsan.backend.controller.impl.UserController;
+import ru.mail.kievsan.backend.controller.impl.UsersAdminController;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.service.impl.UserFileService;

@@ -1,6 +1,6 @@
-package ru.mail.kievsan.backend.controller;
+package ru.mail.kievsan.backend.controller.impl;
 
-import lombok.AllArgsConstructor;
+import ru.mail.kievsan.backend.controller.ControllerImpl;
 import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.admin.updateUserStatusRequest;
@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Objects;
 
 
-@AllArgsConstructor
-public class UsersAdminController implements Controller {
+public class UsersAdminController extends ControllerImpl<String, User, UsersAdminFileService> {
 
-    private final UsersAdminFileService service;
+    public UsersAdminController(UsersAdminFileService service) {
+        super(service);
+    }
 
     public ResponseEntity<User> register(User request) {
         try{

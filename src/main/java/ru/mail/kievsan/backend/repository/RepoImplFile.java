@@ -1,11 +1,10 @@
-package ru.mail.kievsan.backend.repository.impl;
+package ru.mail.kievsan.backend.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ru.mail.kievsan.backend.config.PropertiesLoader;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.repository.Repo;
 import ru.mail.kievsan.util.Utils;
 
 import java.io.File;

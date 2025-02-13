@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 
 import ru.mail.kievsan.backend.config.PropertiesLoader;
-import ru.mail.kievsan.backend.controller.UsersAdminController;
+import ru.mail.kievsan.backend.controller.impl.UsersAdminController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ActivityStatus;

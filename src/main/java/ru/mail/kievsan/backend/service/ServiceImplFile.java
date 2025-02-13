@@ -1,8 +1,7 @@
-package ru.mail.kievsan.backend.service.impl;
+package ru.mail.kievsan.backend.service;
 
 import ru.mail.kievsan.backend.model.Identity;
-import ru.mail.kievsan.backend.repository.impl.RepoImplFile;
-import ru.mail.kievsan.backend.service.Service;
+import ru.mail.kievsan.backend.repository.RepoImplFile;
 
 
 public abstract class ServiceImplFile <K, T extends Identity<K>> implements Service<K, T> {

@@ -7,6 +7,7 @@ import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
+import ru.mail.kievsan.backend.service.ServiceImplFile;
 import ru.mail.kievsan.util.Utils;
 
 import java.time.format.DateTimeFormatter;

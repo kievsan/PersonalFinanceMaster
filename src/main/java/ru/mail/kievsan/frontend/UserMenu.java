@@ -3,7 +3,7 @@ package ru.mail.kievsan.frontend;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 
-import ru.mail.kievsan.backend.controller.UserController;
+import ru.mail.kievsan.backend.controller.impl.UserController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ResponseStatus;

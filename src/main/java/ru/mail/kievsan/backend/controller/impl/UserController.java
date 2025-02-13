@@ -1,7 +1,6 @@
-package ru.mail.kievsan.backend.controller;
+package ru.mail.kievsan.backend.controller.impl;
 
-import lombok.AllArgsConstructor;
-
+import ru.mail.kievsan.backend.controller.ControllerImpl;
 import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
@@ -10,11 +9,13 @@ import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.service.impl.UserFileService;
 
 
-@AllArgsConstructor
-public class UserController implements Controller {
+public class UserController extends ControllerImpl<String, User, UserFileService> {
 
-    private final UserFileService service;
+    public UserController(UserFileService userService) {
+        super(userService);
+    }
 
+    @Override
     public ResponseEntity<User> register(User request) {
         try{
             var response = service.register(request);
@@ -42,6 +43,7 @@ public class UserController implements Controller {
         }
     }
 
+    @Override
     public ResponseEntity<User> update(User request) {
         try{
             var response = service.update(request);
