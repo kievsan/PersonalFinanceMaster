@@ -5,7 +5,7 @@ import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.RepoImplFile;
 
 
-public class UserFileRepo extends RepoImplFile<String, User> {
+public class UserRepoImplFile extends RepoImplFile<String, User> {
 
     @Override
     protected String getFilenameOfRepo() {

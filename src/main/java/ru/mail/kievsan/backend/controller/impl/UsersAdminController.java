@@ -5,15 +5,15 @@ import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.admin.updateUserStatusRequest;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.service.impl.UsersAdminFileService;
+import ru.mail.kievsan.backend.service.impl.UsersAdminServiceImplFile;
 
 import java.util.List;
 import java.util.Objects;
 
 
-public class UsersAdminController extends ControllerImpl<String, User, UsersAdminFileService> {
+public class UsersAdminController extends ControllerImpl<String, User, UsersAdminServiceImplFile> {
 
-    public UsersAdminController(UsersAdminFileService service) {
+    public UsersAdminController(UsersAdminServiceImplFile service) {
         super(service);
     }
 

@@ -5,7 +5,7 @@ import ru.mail.kievsan.backend.exception.UserNotFoundException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.repository.impl.UserRepoImplFile;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
 import ru.mail.kievsan.backend.service.ServiceImplFile;
 import ru.mail.kievsan.util.Utils;
@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 
-public class UserFileService extends ServiceImplFile<String, User> {
+public class UserServiceImplFile extends ServiceImplFile<String, User> {
 
-    public UserFileService(UserFileRepo userRepo) {
+    public UserServiceImplFile(UserRepoImplFile userRepo) {
         super(userRepo);
     }
 

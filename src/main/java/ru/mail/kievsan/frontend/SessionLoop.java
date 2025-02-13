@@ -10,9 +10,9 @@ import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.repository.impl.UserRepoImplFile;
 import ru.mail.kievsan.backend.security.PasswordEncoder;
-import ru.mail.kievsan.backend.service.impl.UserFileService;
+import ru.mail.kievsan.backend.service.impl.UserServiceImplFile;
 import ru.mail.kievsan.util.Utils;
 
 import java.util.Scanner;
@@ -22,12 +22,12 @@ public class SessionLoop {
 
     static Session session = new Session();
     static UserController userController;
-    static UserFileRepo userRepo;
+    static UserRepoImplFile userRepo;
 
     static {
         userController = (UserController) session.getMvc().get("userController");
-        userRepo = (UserFileRepo) session.getMvc().get("userRepo");
-        final var userService = (UserFileService) session.getMvc().get("userService");
+        userRepo = (UserRepoImplFile) session.getMvc().get("userRepo");
+        final var userService = (UserServiceImplFile) session.getMvc().get("userService");
 
         if (userRepo.size() == 0) {
             userService.signup(User.builder()

@@ -4,17 +4,17 @@ import ru.mail.kievsan.backend.exception.UserNotFoundException;
 import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
+import ru.mail.kievsan.backend.repository.impl.UserRepoImplFile;
 import ru.mail.kievsan.backend.service.ServiceImplFile;
 
 import java.util.List;
 
 
-public class UsersAdminFileService extends ServiceImplFile<String, User> {
+public class UsersAdminServiceImplFile extends ServiceImplFile<String, User> {
 
-   UserFileService userService;
+   UserServiceImplFile userService;
 
-    public UsersAdminFileService(UserFileRepo userRepo) {
+    public UsersAdminServiceImplFile(UserRepoImplFile userRepo) {
         super(userRepo);
     }
 

@@ -8,9 +8,9 @@ import ru.mail.kievsan.backend.config.MVC;
 import ru.mail.kievsan.backend.controller.impl.UserController;
 import ru.mail.kievsan.backend.controller.impl.UsersAdminController;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
-import ru.mail.kievsan.backend.service.impl.UserFileService;
-import ru.mail.kievsan.backend.service.impl.UsersAdminFileService;
+import ru.mail.kievsan.backend.repository.impl.UserRepoImplFile;
+import ru.mail.kievsan.backend.service.impl.UserServiceImplFile;
+import ru.mail.kievsan.backend.service.impl.UsersAdminServiceImplFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,13 +32,13 @@ public class Session {
     public void setMvc() {
         this.mvc = new HashMap<>();
 
-        final UserFileRepo userRepo = new UserFileRepo();
-        final UserFileService userFileService = new UserFileService(userRepo);
+        final UserRepoImplFile userRepo = new UserRepoImplFile();
+        final UserServiceImplFile userFileService = new UserServiceImplFile(userRepo);
         mvc.put("userRepo", userRepo);
-        mvc.put("userService", new UserFileService(userRepo));
+        mvc.put("userService", new UserServiceImplFile(userRepo));
         mvc.put("userController", new UserController(userFileService));
 
-        final UsersAdminFileService usersAdminFileService = new UsersAdminFileService(userRepo);
+        final UsersAdminServiceImplFile usersAdminFileService = new UsersAdminServiceImplFile(userRepo);
         mvc.put("usersAdminService", usersAdminFileService);
         mvc.put("usersAdminController", new UsersAdminController(usersAdminFileService));
     }

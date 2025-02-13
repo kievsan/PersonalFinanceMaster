@@ -6,12 +6,12 @@ import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.service.impl.UserFileService;
+import ru.mail.kievsan.backend.service.impl.UserServiceImplFile;
 
 
-public class UserController extends ControllerImpl<String, User, UserFileService> {
+public class UserController extends ControllerImpl<String, User, UserServiceImplFile> {
 
-    public UserController(UserFileService userService) {
+    public UserController(UserServiceImplFile userService) {
         super(userService);
     }
 
