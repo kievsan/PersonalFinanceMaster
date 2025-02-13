@@ -11,6 +11,7 @@ import ru.mail.kievsan.backend.security.PasswordEncoder;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.UUID;
 
 
 public class Utils {
@@ -65,6 +66,10 @@ public class Utils {
         if (!PasswordEncoder.verifyBCrypt(string, hashCode)) {
             throw new NoSuchElementException(errMsg);
         }
+    }
+
+    public static String randomUUID() {
+        return UUID.randomUUID().toString();
     }
 
 }
