@@ -3,7 +3,6 @@ package ru.mail.kievsan.backend.repository.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ru.mail.kievsan.backend.config.PropertiesLoader;
-import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.Identity;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.Repo;
@@ -15,10 +14,10 @@ import java.util.*;
 
 public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K, T> {
 
-    private final ObjectMapper jacksonMapper = Utils.prettyJackson;
+    protected final ObjectMapper jacksonMapper = Utils.prettyJackson;
     final File REPO_FILE = new File(PropertiesLoader.loadDataSourcePath() + "/" + getFilenameOfRepo());
 
-    private final Map<K, T> store = load();
+    protected final Map<K, T> store = load();
 
     {
         System.out.printf("\nзагружаю...\n%s\n", store);

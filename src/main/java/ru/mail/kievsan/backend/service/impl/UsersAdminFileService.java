@@ -1,33 +1,38 @@
-package ru.mail.kievsan.backend.service;
+package ru.mail.kievsan.backend.service.impl;
 
-import lombok.AllArgsConstructor;
 import ru.mail.kievsan.backend.exception.UserNotFoundException;
-import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
 import ru.mail.kievsan.backend.model.ActivityStatus;
 import ru.mail.kievsan.backend.model.Role;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
-import ru.mail.kievsan.backend.security.PasswordEncoder;
-import ru.mail.kievsan.util.Utils;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 
-@AllArgsConstructor
-public class UsersAdminService implements Service {
+public class UsersAdminFileService extends ServiceImplFile<String, User> {
 
-    private final UserFileRepo userRepo;
+   UserFileService userService;
 
-    public User updateUser(User user) throws UserNotFoundException {
-        User newUser = new User(user, PasswordEncoder.encodeBCrypt(user.getPassword()));
-        User oldUser = userRepo.save(newUser).orElseThrow(() -> new UserNotFoundException(
-                String.format("Couldn't update the user: %s not found!", user)));
-        return user;
+    public UsersAdminFileService(UserFileRepo userRepo) {
+        super(userRepo);
     }
+
+
+    @Override
+    public User register(User user) {
+        return userService.register(user);
+    }
+
+    @Override
+    public void signup(User newUser) {
+        userService.signup(newUser);
+    }
+
+    @Override
+    public User update(User user) {
+        return userService.update(user);
+    }
+
 
     public User updateUserStatus(String id, ActivityStatus status) {
         User user = getUserById(id);
@@ -41,42 +46,46 @@ public class UsersAdminService implements Service {
     }
 
     private User getUserById(String id) throws UserNotFoundException {
-        return userRepo.getById(id).orElseThrow(() -> new UserNotFoundException("user '" + id + "' not found!"));
+        return repo.getById(id).orElseThrow(() -> new UserNotFoundException("user '" + id + "' not found!"));
+    }
+
+    public List<User> getUserListByStatus(ActivityStatus status) {
+        return repo.getAll().stream().filter(user -> user.getStatus() == status).toList();
     }
 
     public List<User> getUserList(String filter) {
         List<User> userList;
         switch (filter) {
             case "A" -> {
-                userList = userRepo.getUsersByStatus(ActivityStatus.ACTIVE);
+                userList = getUserListByStatus(ActivityStatus.ACTIVE);
                 System.out.printf("Выбран status: %s\n", ActivityStatus.ACTIVE);
             }
             case "D" -> {
-                userList =  userRepo.getUsersByStatus(ActivityStatus.DELETED);
+                userList = getUserListByStatus(ActivityStatus.DELETED);
                 System.out.printf("Выбран status: %s\n", ActivityStatus.DELETED);
             }
             case "L" -> {
-                userList =  userRepo.getUsersByStatus(ActivityStatus.LOCKED);
+                userList = getUserListByStatus(ActivityStatus.LOCKED);
                 System.out.printf("Выбран status: %s\n", ActivityStatus.LOCKED);
             }
             case "AD" -> {
-                userList = userRepo.getUsersByStatus(ActivityStatus.ACTIVE);
-                userList.addAll(userRepo.getUsersByStatus(ActivityStatus.DELETED));
+                userList = getUserListByStatus(ActivityStatus.ACTIVE);
+                userList.addAll(getUserListByStatus(ActivityStatus.DELETED));
                 System.out.printf("Выбран status:\t%s + %s\n", ActivityStatus.ACTIVE, ActivityStatus.DELETED);
             }
             case "AL" -> {
-                userList = userRepo.getUsersByStatus(ActivityStatus.ACTIVE);
-                userList.addAll(userRepo.getUsersByStatus(ActivityStatus.LOCKED));
+                userList = getUserListByStatus(ActivityStatus.ACTIVE);
+                userList.addAll(getUserListByStatus(ActivityStatus.LOCKED));
                 System.out.printf("Выбран status:\t%s + %s\n", ActivityStatus.ACTIVE, ActivityStatus.LOCKED);
             }
             case "DL" -> {
-                userList = userRepo.getUsersByStatus(ActivityStatus.DELETED);
-                userList.addAll(userRepo.getUsersByStatus(ActivityStatus.LOCKED));
+                userList = getUserListByStatus(ActivityStatus.DELETED);
+                userList.addAll(getUserListByStatus(ActivityStatus.LOCKED));
                 System.out.printf("Выбран status:\t%s_and_%s\n", ActivityStatus.DELETED, ActivityStatus.LOCKED);
             }
             default -> {
                 System.out.println("Выбран status: Full");
-                return userRepo.getAll();
+                return repo.getAll();
             }
         }
         return userList;
@@ -101,5 +110,4 @@ public class UsersAdminService implements Service {
             return false;
         }
     }
-
 }

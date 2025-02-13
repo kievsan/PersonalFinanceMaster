@@ -7,13 +7,13 @@ import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.Session;
 
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.service.UserService;
+import ru.mail.kievsan.backend.service.impl.UserFileService;
 
 
 @AllArgsConstructor
 public class UserController implements Controller {
 
-    private final UserService service;
+    private final UserFileService service;
 
     public ResponseEntity<User> register(User request) {
         try{
@@ -44,7 +44,7 @@ public class UserController implements Controller {
 
     public ResponseEntity<User> update(User request) {
         try{
-            var response = service.updateUser(request);
+            var response = service.update(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());

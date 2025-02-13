@@ -2,7 +2,6 @@ package ru.mail.kievsan.backend.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import ru.mail.kievsan.backend.config.MVC;
@@ -10,8 +9,8 @@ import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.controller.UsersAdminController;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.repository.impl.UserFileRepo;
-import ru.mail.kievsan.backend.service.UserService;
-import ru.mail.kievsan.backend.service.UsersAdminService;
+import ru.mail.kievsan.backend.service.impl.UserFileService;
+import ru.mail.kievsan.backend.service.impl.UsersAdminFileService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,13 +33,13 @@ public class Session {
         this.mvc = new HashMap<>();
 
         final UserFileRepo userRepo = new UserFileRepo();
-        final UserService userService = new UserService(userRepo);
+        final UserFileService userFileService = new UserFileService(userRepo);
         mvc.put("userRepo", userRepo);
-        mvc.put("userService", new UserService(userRepo));
-        mvc.put("userController", new UserController(userService));
+        mvc.put("userService", new UserFileService(userRepo));
+        mvc.put("userController", new UserController(userFileService));
 
-        final UsersAdminService usersAdminService = new UsersAdminService(userRepo);
-        mvc.put("usersAdminService", usersAdminService);
-        mvc.put("usersAdminController", new UsersAdminController(usersAdminService));
+        final UsersAdminFileService usersAdminFileService = new UsersAdminFileService(userRepo);
+        mvc.put("usersAdminService", usersAdminFileService);
+        mvc.put("usersAdminController", new UsersAdminController(usersAdminFileService));
     }
 }

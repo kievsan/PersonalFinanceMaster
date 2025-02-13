@@ -1,6 +1,4 @@
-package ru.mail.kievsan.backend.service;
-
-import lombok.AllArgsConstructor;
+package ru.mail.kievsan.backend.service.impl;
 
 import ru.mail.kievsan.backend.exception.UserLockedException;
 import ru.mail.kievsan.backend.exception.UserNotFoundException;
@@ -16,24 +14,27 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 
-@AllArgsConstructor
-public class UserService implements Service {
+public class UserFileService extends ServiceImplFile<String, User> {
 
-    private final UserFileRepo userRepo;
+    public UserFileService(UserFileRepo userRepo) {
+        super(userRepo);
+    }
 
+    @Override
     public User register(User user) throws RuntimeException {
-        if (userRepo.existsById(user.getId())) {
+        if (repo.existsById(user.getId())) {
             throw new RuntimeException("The login is already in use, registration is not possible!");
         }
         signup(new User(user, PasswordEncoder.encodeBCrypt(user.getPassword())));
         return user;
     }
 
+    @Override
     public void signup(User newUser) throws RuntimeException {
         String msg = Utils.capitalize(newUser.getRole().toString());
         try {
-            userRepo.save(newUser);
-            var user = userRepo.getById(newUser.getId()).orElseThrow();
+            repo.save(newUser);
+            var user = repo.getById(newUser.getId()).orElseThrow();
             msg += " signup: Id=" + user.getId();
             System.out.println(msg);
         } catch (RuntimeException e) {
@@ -46,7 +47,7 @@ public class UserService implements Service {
         String msg = String.format("\n'%s'", user.getId());
         String errMsg = " was not authenticated: wrong username or password!";
         try {
-            User targetUser = userRepo.getById(user.getId()).orElseThrow();
+            User targetUser = repo.getById(user.getId()).orElseThrow();
 
             if (targetUser.getStatus() == ActivityStatus.DELETED) throw new UserNotFoundException("user was deleted!");
             if (targetUser.getStatus() == ActivityStatus.LOCKED) throw new UserLockedException(String.format(
@@ -79,10 +80,11 @@ public class UserService implements Service {
         return String.format("Success logout: %s '%s'", role, id);
     }
 
-    public User updateUser(User user) throws UserNotFoundException {
+    @Override
+    public User update(User user) throws UserNotFoundException {
         User newUser = new User(user, PasswordEncoder.encodeBCrypt(user.getPassword()));
-        User oldUser = userRepo.save(newUser).orElseThrow(() -> new UserNotFoundException(
-                String.format("Обновить данные пользователя не удалось: %s - не найден!", user)));
+        User oldUser = repo.save(newUser).orElseThrow(() -> new UserNotFoundException(
+                String.format("Couldn't update the user: %s not found!", user)));
         return user;
     }
 

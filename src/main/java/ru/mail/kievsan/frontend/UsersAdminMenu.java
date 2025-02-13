@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 
 import ru.mail.kievsan.backend.config.PropertiesLoader;
-import ru.mail.kievsan.backend.controller.UserController;
 import ru.mail.kievsan.backend.controller.UsersAdminController;
 import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.exception.VerifyUserPasswordException;
@@ -31,19 +30,18 @@ public class UsersAdminMenu {
     public static void start(Session currentSession) {
         session = currentSession;
         var controller = (UsersAdminController) session.getMvc().get("usersAdminController");
-        var userController = (UserController) session.getMvc().get("userController");
 
         System.out.println("\n*****\nУправление Аккаунтами приложения \"Домашние финансы\"!");
         start: while (true) {
             try {
                 switch (getMenuPoint()) {
                     case "1" -> {
-                        var response = userController.update(getValidPasswordRequest());
+                        var response = controller.update(getValidPasswordRequest());
                         processResponse(response);
                         session.setCurrentUser(response.getBody());
                     }
                     case "2" -> {
-                        var response = userController.register(getValidUser());
+                        var response = controller.register(getValidUser());
                         processResponse(response);
                     }
                     case "3" -> {
@@ -153,7 +151,7 @@ public class UsersAdminMenu {
 
     public static String getUserStatusValuesStr() {
         List<String> values = new ArrayList<>();
-        for (var value : ActivityStatus.values()) values.add(value.name().charAt(0) + "-" + value.toString());
+        for (var value : ActivityStatus.values()) values.add(value.name().charAt(0) + "-" + value);
         return String.join(", ", values);
     }
 

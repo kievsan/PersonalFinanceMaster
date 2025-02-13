@@ -5,7 +5,7 @@ import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
 import ru.mail.kievsan.backend.model.dto.admin.updateUserStatusRequest;
 import ru.mail.kievsan.backend.model.entity.User;
-import ru.mail.kievsan.backend.service.UsersAdminService;
+import ru.mail.kievsan.backend.service.impl.UsersAdminFileService;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,11 +14,20 @@ import java.util.Objects;
 @AllArgsConstructor
 public class UsersAdminController implements Controller {
 
-    private final UsersAdminService service;
+    private final UsersAdminFileService service;
 
-    public ResponseEntity<User> update(User user) {
+    public ResponseEntity<User> register(User request) {
         try{
-            var response = service.updateUser(user);
+            var response = service.register(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
+        }
+    }
+
+    public ResponseEntity<User> update(User request) {
+        try{
+            var response = service.update(request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(ResponseStatus.FAIL, e.getMessage());
