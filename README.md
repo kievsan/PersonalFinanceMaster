@@ -37,7 +37,7 @@
 
 ## для запуска сервиса:
 
-1. Клонировать github-репозиторий:
+1. **Клонировать github-репозиторий:**
    ```bash
    git clone https://github.com/kievsan/PersonalFinanceMaster.git
    cd PersonalFinanceMaster
