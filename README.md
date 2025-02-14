@@ -37,8 +37,17 @@
 
 ## для запуска сервиса:
 
-1. Клонировать из github:
-    #### git clone https://github.com/kievsan/PersonalFinanceMaster.git
-2. Открыть в IDE и запустить
+1. Клонировать github-репозиторий:
+   ```bash
+   git clone https://github.com/kievsan/PersonalFinanceMaster.git
+   cd PersonalFinanceMaster
+   ```
+    
+2. **Собрать и запустить (Maven):**
+
+   ```bash
+   mvn clean compile
+   mvn exec:java -Dexec.mainClass="ru.mail.kievsan.Main"
+   ```
 
 ---
