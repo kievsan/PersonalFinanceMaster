@@ -17,7 +17,7 @@ public class PropertiesLoader {
     public static final String PROP_KEY_DEFAULT_REPO_PATH = "./data/repo_files";
     public static final String PROP_KEY_DEFAULT_USERS_REPO_NAME = "users.json";
     public static final String PROP_KEY_DEFAULT_WALLETS_REPO_NAME = "wallets.json";
-    public static final String PROP_KEY_DEFAULT_CATEGORIES_REPO_NAME = "budget_categories.json";
+    public static final String PROP_KEY_DEFAULT_CATEGORIES_REPO_NAME = "budget.json";
 
     public static final String PROP_KEY_ADMIN_LOGIN = "admin.login";
     public static final String PROP_KEY_ADMIN_PASSWORD = "admin.password";

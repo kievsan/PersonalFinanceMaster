@@ -21,7 +21,7 @@ public class MainMenu {
             try {
                 switch (getMenuPoint()) {
                     case "1" -> UserMenu.start(session); //walletController;
-                    case "2" -> UserMenu.start(session); //budgetController;
+                    case "2" -> BudgetMenu.start(session); //budgetController;
                     case "3" -> UserMenu.start(session); //transactionController;
                     case "4" -> {
                         switch (session.getCurrentUser().getRole()) {
@@ -47,7 +47,7 @@ public class MainMenu {
     private static String getMenuPoint() {
         System.out.printf("\nMAIN-Меню:\t\t\t( %s )\n", session.getCurrentUser());
         System.out.println("1. Управление кошельками");
-        System.out.println("2. Управление категориями и бюджетами");
+        System.out.println("2. Управление бюджетами");
         System.out.println("3. Управление транзакциями");
         System.out.println("4. Управление аккаунтами");
         System.out.println("5. Выйти из аккаунта");

@@ -19,7 +19,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
     protected final Map<K, T> store = load();
 
     {
-        System.out.printf("\nзагружаю...\n%s\n", store);
+        System.out.printf("\n%s\t'%s' загружаю...\n%s\n", getEntityName(), getFilenameOfRepo(), store);
     }
 
     protected abstract String getFilenameOfRepo();
@@ -75,7 +75,7 @@ public abstract class RepoImplFile <K, T extends Identity<K>> implements Repo<K,
 
     @Override
     public void close() {
-        System.out.println("сохраняю данные...");
+        System.out.printf("\n%s\t'%s' сохраняю данные...\n", getEntityName(), getFilenameOfRepo());
         this.upload();
         System.out.printf("\n%s\n\n", this.getAll());
     }

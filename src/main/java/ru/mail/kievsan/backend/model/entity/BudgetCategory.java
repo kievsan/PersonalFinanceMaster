@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.Getter;
 import ru.mail.kievsan.backend.exception.NotValidBudgetCategoryException;
-import ru.mail.kievsan.backend.exception.NotValidUserException;
 import ru.mail.kievsan.backend.model.Identity;
+import ru.mail.kievsan.util.Utils;
 
 import java.util.Objects;
 
@@ -23,32 +23,46 @@ public class BudgetCategory extends Identity<String> {
     private String name;
     private double limit;
 
+
+    public BudgetCategory(String userId, boolean system, String name, double limit) {
+        this(Utils.randomUUID(), userId, system, name, limit);
+    }
+
+    public BudgetCategory(BudgetCategory category) {
+        this(Utils.randomUUID(), category.userId, category.system, category.name, category.limit);
+    }
+
     @Builder
     @JsonCreator()
     @JsonPropertyOrder({ "id", "userId", "system", "name", "limit" })
     public BudgetCategory(String id, String userId, boolean system, String name, double limit) {
         super(id);
-        validateUserId();
+//        validateUserId();
         this.userId = userId;
         this.system = system;
         setName(name);
         setLimit(limit);
     }
 
-    public static boolean isNotValidId(String id) {
-        return id.isBlank() || id.length() != UUID_LENGTH;
+    public BudgetCategory copy(BudgetCategory category) {
+        return new BudgetCategory(category.id, category.userId, category.system, category.name, category.limit);
     }
 
-    public static boolean isNotValidUserId(String userId) {
-        return User.isNotValidLogin(userId);
+
+    public static boolean isNotValidId(String id) {
+        return id == null || id.isBlank() || id.length() != UUID_LENGTH;
     }
+
+//    public static boolean isNotValidUserId(String userId) {
+//        return User.isNotValidLogin(userId);
+//    }
 
     public static boolean isNotValidName(String name) {
-        return name.isBlank() || name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH;
+        return name == null || name.isBlank() || name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH;
     }
 
     public void setName(String name) {
-        validateName();
+        validateName(name);
         this.name = name;
     }
 
@@ -61,22 +75,22 @@ public class BudgetCategory extends Identity<String> {
         if (isNotValidId(id)) throw new NotValidBudgetCategoryException("Not valid budget category id!");
     }
 
-    public void validateUserId() {
-        if (isNotValidUserId(id)) throw new NotValidUserException("Not valid user id!");
-    }
+//    public void validateUserId() {
+//        if (isNotValidUserId(id)) throw new NotValidUserException("Not valid category id!");
+//    }
 
-    public void validateName() {
+    public void validateName(String name) {
         if (isNotValidName(name)) throw new NotValidBudgetCategoryException("Not valid budget category name!");
     }
 
     @Override
     public String toString() {
-        return "Бюджетная категория '" + name + "' с лимитом " + limit + " руб. для пользователя " + userId;
+        return String.format("Бюджетная категория '%s' с лимитом %s руб. для пользователя '%s'", name, limit, userId);
     }
-    public String toMiddleString2() {
+    public String toMiddleString() {
         return "Бюдж.кат. '" + name + "' (лимит " + limit + " руб.)";
     }
-    public String toShortString1() {
+    public String toShortString() {
         return "'" + name + "' ( " + limit + " руб. )";
     }
 
@@ -92,4 +106,9 @@ public class BudgetCategory extends Identity<String> {
     public int hashCode() {
         return Objects.hash(id, userId, name);
     }
+
+//    public int compareTo(BudgetCategory category){
+//        return name.compareTo(category.getName());
+//    }
+
 }

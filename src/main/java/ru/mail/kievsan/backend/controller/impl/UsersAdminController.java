@@ -3,7 +3,7 @@ package ru.mail.kievsan.backend.controller.impl;
 import ru.mail.kievsan.backend.controller.ControllerImpl;
 import ru.mail.kievsan.backend.model.ResponseStatus;
 import ru.mail.kievsan.backend.model.dto.ResponseEntity;
-import ru.mail.kievsan.backend.model.dto.admin.updateUserStatusRequest;
+import ru.mail.kievsan.backend.model.dto.admin.UpdateUserStatusRequest;
 import ru.mail.kievsan.backend.model.entity.User;
 import ru.mail.kievsan.backend.service.impl.UsersAdminServiceImplFile;
 
@@ -35,7 +35,7 @@ public class UsersAdminController extends ControllerImpl<String, User, UsersAdmi
         }
     }
 
-    public ResponseEntity<User> updateUserStatus(updateUserStatusRequest request, User currentUser) {
+    public ResponseEntity<User> updateUserStatus(UpdateUserStatusRequest request, User currentUser) {
         try{
             checkRightsForUpdate(request.id(), currentUser);
             var response = service.updateUserStatus(request.id(), request.status());
